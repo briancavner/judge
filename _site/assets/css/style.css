@@ -1,0 +1,69 @@
+html { margin: 0; width: 100%; height: 100%; font-size: 10px; }
+
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0; background-color: #201700; color: #F5F4F1; font-size: 1.8rem; line-height: 2.2rem; }
+
+#backdrop { position: absolute; width: 100vw; height: 100vh; background-color: #201700; background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h16v2h-6v6h6v8H8v-6H2v6H0V0zm4 4h2v2H4V4zm8 8h2v2h-2v-2zm-8 0h2v2H4v-2zm8-8h2v2h-2V4z' fill='%23050020' fill-opacity='0.54' fill-rule='evenodd'/%3E%3C/svg%3E"); }
+
+#canvas { position: absolute; top: 0; left: 0; background: #201700 url("/assets/img/courtroom.png") no-repeat; background-size: contain; width: 100%; height: 100%; max-width: 177.7777777778vh; max-height: 56.25vw; margin-left: 50vw; margin-top: 50vh; transform: translate(-50%, -50%); overflow: hidden; }
+
+.speech { position: absolute; background-color: #F5F4F1; color: #201700; padding: 1.125em 1.5em; border-radius: 1rem; box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3), 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.2); }
+
+.speech::before { content: ""; position: absolute; width: 0; height: 0; top: 100%; left: 5vw; border: .75rem solid transparent; border-bottom: none; border-top-color: #F5F4F1; }
+
+.pSpeech { top: 4%; left: 18%; max-width: 38%; min-width: 4%; }
+
+.dSpeech { top: 4%; right: 18%; max-width: 38%; min-width: 4%; }
+
+.dSpeech::before { left: auto; right: 4.8vw; }
+
+.jSpeech { min-width: 4%; max-width: 50%; bottom: 30%; left: 15%; }
+
+#desk { position: absolute; bottom: 0; background: url("/assets/img/desk.png") no-repeat; background-size: contain; width: 100%; height: 35%; }
+
+#desk .icon { position: absolute; background-repeat: no-repeat; top: 61%; width: 7%; height: 35.5555555556%; transition: all 1.3s; background-size: contain; }
+
+#desk .complaint { left: 20%; background-image: url("/assets/img/complaint.png"); }
+
+#desk .response { left: 73%; background-image: url("/assets/img/response.png"); }
+
+#desk .transcript { left: 3%; background-image: url("/assets/img/transcript.png"); }
+
+#desk .dictionary { left: 90%; background-image: url("/assets/img/dictionary.png"); }
+
+#items .item { background-size: contain; background-repeat: no-repeat; position: absolute; transition: all 1.5s; top: 5%; left: 10%; margin-top: 150%; width: 80%; height: 90%; }
+
+#items .content { color: #201700; overflow-y: scroll; }
+
+#items .content p { margin: 1em; }
+
+#items .content .tag { cursor: pointer; padding: 0.2% 0.6%; background: linear-gradient(104deg, rgba(255, 177, 122, 0) 0.9%, #ffb17a 2.4%, rgba(255, 177, 122, 0.5) 5.8%, rgba(255, 177, 122, 0.1) 93%, rgba(255, 177, 122, 0.7) 96%, rgba(255, 177, 122, 0) 98%), linear-gradient(183deg, rgba(255, 177, 122, 0) 0%, rgba(255, 177, 122, 0.3) 7.9%, rgba(255, 177, 122, 0) 15%); -webkit-box-decoration-break: clone; margin: -0.2% -0.6%; border-radius: 13%; text-shadow: -12px 12px 9.8px rgba(255, 177, 122, 0.7), 21px -18.1px 7.3px white, -18.1px -27.3px 30px white; }
+
+#items .content .tag:hover { background: linear-gradient(104deg, rgba(202, 255, 122, 0) 0.9%, #caff7a 2.4%, rgba(202, 255, 122, 0.5) 5.8%, rgba(202, 255, 122, 0.1) 93%, rgba(202, 255, 122, 0.7) 96%, rgba(202, 255, 122, 0) 98%), linear-gradient(183deg, rgba(202, 255, 122, 0) 0%, rgba(202, 255, 122, 0.3) 7.9%, rgba(202, 255, 122, 0) 15%); text-shadow: -12px 12px 9.8px rgba(202, 255, 122, 0.7), 21px -18.1px 7.3px white, -18.1px -27.3px 30px white; }
+
+#items .complaint { background-image: url("/assets/img/complaintBig.png"); }
+
+#items .complaint .content { position: absolute; top: 5%; left: 51%; width: 40%; height: 90%; background-color: #F5F4F1; }
+
+#items .response { background-image: url("/assets/img/responseBig.png"); }
+
+#items .response .content { position: absolute; top: 5%; left: 51%; width: 40%; height: 90%; background-color: #F5F4F1; }
+
+#items .transcript { background-image: url("/assets/img/transcriptBig.png"); }
+
+#items .dictionary { background-image: url("/assets/img/dictionaryBig.png"); }
+
+#blocker { width: 100%; height: 100%; pointer-events: none; opacity: 0; background: #201700; transition: all 1.5s; }
+
+#plaintiff { left: 18%; }
+
+#defendant { right: 18%; }
+
+.litigant { top: 9%; position: absolute; width: 11%; height: 45%; }
+
+.litHead { position: absolute; width: 100%; height: 38%; background-repeat: no-repeat; background-size: contain; background-position: center; transition: all 3s; }
+
+.litBody { position: absolute; top: 29%; width: 100%; height: 22%; background-repeat: no-repeat; background-size: contain; background-position: center; }
+
+.lectern { position: absolute; bottom: 0; width: 100%; height: 100%; background-repeat: no-repeat; background-size: contain; background-position: bottom; }
+
+/*# sourceMappingURL=style.css.map */

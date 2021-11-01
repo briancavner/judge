@@ -1,0 +1,141 @@
+#desk {
+    position: absolute;
+    bottom: 0;
+    background: url("/assets/img/desk.png") no-repeat;
+    background-size: contain;
+    width: 100%;
+    height: 35%;
+}
+
+#desk .icon {
+    position: absolute;
+    background-repeat: no-repeat;
+    top: 61%;
+    width: 7%;
+    height: (7*16%/(0.35*9));
+    transition: all 1.3s;
+    background-size: contain;
+}
+
+#desk .complaint {
+    left: 20%;
+    background-image: url("/assets/img/complaint.png");
+}
+
+#desk .response {
+    left: 73%;
+    background-image: url("/assets/img/response.png");
+}
+
+#desk .transcript {
+    left: 3%;
+    background-image: url("/assets/img/transcript.png");
+}
+
+#desk .dictionary {
+    left: 90%;
+    background-image: url("/assets/img/dictionary.png");
+}
+
+#items .item {
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: absolute;
+    transition: all 1.5s;
+    top: 5%;
+    left: 10%;
+    margin-top: 150%;
+    width: 80%;
+    height: 90%;
+}
+
+#items .content {
+    color: $black;
+    overflow-y: scroll;
+}
+
+#items .content p {
+    margin: 1em;
+}
+
+#items .content .tag {
+    cursor: pointer;
+    padding: 0.2% 0.6%;
+    background: linear-gradient(104deg, 
+            rgba(255, 177, 122,0) 0.9%, 
+            rgba(255, 177, 122,1.25) 2.4%, 
+            rgba(255, 177, 122,0.5) 5.8%, 
+            rgba(255, 177, 122,0.1) 93%, 
+            rgba(255, 177, 122,0.7) 96%, 
+            rgba(255, 177, 122,0) 98%), 
+        linear-gradient(183deg, 
+            rgba(255, 177, 122,0) 0%, 
+            rgba(255, 177, 122,0.3) 7.9%, 
+            rgba(255, 177, 122,0) 15%);
+    -webkit-box-decoration-break: clone;
+    margin: -0.2% -0.6%;
+    border-radius: 13%;
+    text-shadow: -12px 12px 9.8px rgba(255, 177, 122,0.7), 
+        21px -18.1px 7.3px rgba(255, 255, 255,1), 
+        -18.1px -27.3px 30px rgba(255, 255, 255,1);
+}
+
+    #items .content .tag:hover {
+        background: linear-gradient(104deg, 
+                rgba(202, 255, 122,0) 0.9%, 
+                rgba(202, 255, 122,1.25) 2.4%, 
+                rgba(202, 255, 122,0.5) 5.8%, 
+                rgba(202, 255, 122,0.1) 93%, 
+                rgba(202, 255, 122,0.7) 96%, 
+                rgba(202, 255, 122,0) 98%), 
+            linear-gradient(183deg, 
+                rgba(202, 255, 122,0) 0%, 
+                rgba(202, 255, 122,0.3) 7.9%, 
+                rgba(202, 255, 122,0) 15%);
+        text-shadow: -12px 12px 9.8px rgba(202, 255, 122,0.7), 
+            21px -18.1px 7.3px rgba(255, 255, 255,1), 
+            -18.1px -27.3px 30px rgba(255, 255, 255,1);
+    }
+
+#items .complaint {
+    background-image: url("/assets/img/complaintBig.png");
+}
+
+    #items .complaint .content {
+        position: absolute;
+        top: 5%;
+        left: 51%;
+        width: 40%;
+        height: 90%;
+        background-color: $white;
+    }
+
+#items .response {
+    background-image: url("/assets/img/responseBig.png");
+}
+
+    #items .response .content {
+        position: absolute;
+        top: 5%;
+        left: 51%;
+        width: 40%;
+        height: 90%;
+        background-color: $white;
+    }
+
+#items .transcript {
+    background-image: url("/assets/img/transcriptBig.png");
+}
+
+#items .dictionary {
+    background-image: url("/assets/img/dictionaryBig.png");
+}
+
+#blocker {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    background: $black;
+    transition: all 1.5s;
+}

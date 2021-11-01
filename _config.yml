@@ -1,0 +1,9 @@
+port: 5000
+title: Judge
+email: judge@batsgames.com
+description: >-
+  Judge
+exclude:
+  - notes.txt
+  - raw
+  - changelog.txt
