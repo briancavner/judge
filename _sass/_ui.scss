@@ -46,14 +46,14 @@
 .pSpeech {
     top: 4%;
     left: 18%;
-    max-width: 38%;
+    max-width: 50%;
     min-width: 4%;
 }
 
 .dSpeech {
     top: 4%;
     right: 18%;
-    max-width: 38%;
+    max-width: 50%;
     min-width: 4%;
 }
 
@@ -67,4 +67,73 @@
     max-width: 50%;
     bottom: 30%;
     left: 15%;
+}
+
+#respond {
+    position: absolute;
+    background-color: $black;
+    border: 2px solid $white;
+    top: 70%;
+    bottom: 10%;
+    left: 30%;
+    right: 30%;
+    display: none;
+    overflow: hidden;
+}
+
+#respond button{
+    position: relative;
+    background: #333;
+    color: #ccc;
+    margin: 2%;
+    width: 200px;
+    height: 60px;
+    border: 0;
+    font-size: 18px;
+    border-radius: 4px;
+    transition: .6s;
+    overflow: hidden;
+    &:focus{
+        outline: 0;
+    }
+    &:before{
+        content: '';
+        display: block;
+        position: absolute;
+        background: rgba(255,255,255,0.5);
+        width: 60px;
+        height: 100%;
+        left: 0;
+        top: 0;
+        opacity: .5;
+        filter: blur(30px);
+        transform: translateX(-100px)  skewX(-15deg);
+    }
+    &:after{
+        content: '';
+        display: block;
+        position: absolute;
+        background: rgba(255,255,255,0.2);
+        width: 30px;
+        height: 100%;
+        left: 30px;
+        top: 0;
+        opacity: 0;
+        filter: blur(5px);
+        transform: translateX(-100px) skewX(-15deg);
+    }
+    &:hover{
+        background: #338033;
+        cursor: pointer;
+        &:before{
+          transform: translateX(300px)  skewX(-15deg);  
+          opacity: 0.6;
+          transition: .7s;
+        }
+        &:after{
+          transform: translateX(300px) skewX(-15deg);  
+          opacity: 1;
+          transition: .7s;
+        }
+    }
 }

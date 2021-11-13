@@ -10,13 +10,29 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 .speech::before { content: ""; position: absolute; width: 0; height: 0; top: 100%; left: 5vw; border: .75rem solid transparent; border-bottom: none; border-top-color: #F5F4F1; }
 
-.pSpeech { top: 4%; left: 18%; max-width: 38%; min-width: 4%; }
+.pSpeech { top: 4%; left: 18%; max-width: 50%; min-width: 4%; }
 
-.dSpeech { top: 4%; right: 18%; max-width: 38%; min-width: 4%; }
+.dSpeech { top: 4%; right: 18%; max-width: 50%; min-width: 4%; }
 
 .dSpeech::before { left: auto; right: 4.8vw; }
 
 .jSpeech { min-width: 4%; max-width: 50%; bottom: 30%; left: 15%; }
+
+#respond { position: absolute; background-color: #201700; border: 2px solid #F5F4F1; top: 70%; bottom: 10%; left: 30%; right: 30%; display: none; overflow: hidden; }
+
+#respond button { position: relative; background: #333; color: #ccc; margin: 2%; width: 200px; height: 60px; border: 0; font-size: 18px; border-radius: 4px; transition: .6s; overflow: hidden; }
+
+#respond button:focus { outline: 0; }
+
+#respond button:before { content: ''; display: block; position: absolute; background: rgba(255, 255, 255, 0.5); width: 60px; height: 100%; left: 0; top: 0; opacity: .5; filter: blur(30px); transform: translateX(-100px) skewX(-15deg); }
+
+#respond button:after { content: ''; display: block; position: absolute; background: rgba(255, 255, 255, 0.2); width: 30px; height: 100%; left: 30px; top: 0; opacity: 0; filter: blur(5px); transform: translateX(-100px) skewX(-15deg); }
+
+#respond button:hover { background: #338033; cursor: pointer; }
+
+#respond button:hover:before { transform: translateX(300px) skewX(-15deg); opacity: 0.6; transition: .7s; }
+
+#respond button:hover:after { transform: translateX(300px) skewX(-15deg); opacity: 1; transition: .7s; }
 
 #desk { position: absolute; bottom: 0; background: url("/assets/img/desk.png") no-repeat; background-size: contain; width: 100%; height: 35%; }
 
@@ -32,7 +48,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 #items .item { background-size: contain; background-repeat: no-repeat; position: absolute; transition: all 1.5s; top: 5%; left: 10%; margin-top: 150%; width: 80%; height: 90%; }
 
-#items .content { color: #201700; overflow-y: scroll; }
+#items .content { position: absolute; color: #201700; overflow: auto; background-color: #F5F4F1; }
 
 #items .content p { margin: 1em; }
 
@@ -42,15 +58,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 #items .complaint { background-image: url("/assets/img/complaintBig.png"); }
 
-#items .complaint .content { position: absolute; top: 5%; left: 51%; width: 40%; height: 90%; background-color: #F5F4F1; }
+#items .complaint .content { top: 5%; left: 51%; width: 40%; height: 90%; }
 
 #items .response { background-image: url("/assets/img/responseBig.png"); }
 
-#items .response .content { position: absolute; top: 5%; left: 51%; width: 40%; height: 90%; background-color: #F5F4F1; }
+#items .response .content { top: 5%; left: 51%; width: 40%; height: 90%; }
 
 #items .transcript { background-image: url("/assets/img/transcriptBig.png"); }
 
 #items .dictionary { background-image: url("/assets/img/dictionaryBig.png"); }
+
+#items .dictionary .content { top: 3%; left: 48%; width: 47%; height: 87%; }
 
 #blocker { width: 100%; height: 100%; pointer-events: none; opacity: 0; background: #201700; transition: all 1.5s; }
 

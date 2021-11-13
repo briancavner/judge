@@ -1,7 +1,7 @@
 title: A Petition Pursuant to a Pulverized Pig Pen
 summary:
-  - Plaintiff Sally Swineman says that defendant Hailey Heiferson damaged her feeding trough, and is suing for $160, the cost to replace it.
-  - Ms. Heiferson says that she has no proof for her accusations, and that it could have been anyone in the barnyard due to Ms. Swineman's borish attitude.
+  - Plaintiff Sally Swineman says that defendant Hailey Heiferson broke her manure grate during an important social gathering at her pen, leading to embarassment and financial loss. She is suing for $260, the cost to replace her grate.
+  - Ms. Heiferson says that many people had used the manure grate that night, and that she was not the one to break it.
 plaintiff:
   name: Paula Piglet
   appearance:
@@ -12,11 +12,14 @@ defendant:
   appearance:
     head: 6
     body: 2
+dictionary: [cause_of_action, standard_of_evidence, relevance, hearsay, statement_by_party_opponent]
 complaint:
-  - I am a [[long-time resident|resident]] of [[Flourishing Fields|flourishing]], and a [[respected member|respected]] of the community. The defendant, Ms. Heiferson, is my [[neighbor]], and she is someone with whom I have [[never been able to get along|get_along]] despite my [[best efforts|best_efforts]].
-  - On the night of October 11, I was taking my piglets for an evening walk. We came home, and I put my piglets to bed. I felt a craving for a snack before bed, as is common for anyone, and went out to the trough. I found it smashed in multiple places, clearly intentionally.
-  - I knew right away that Ms. Heiferson had done it. She's jealous of me, and told me that she would do something like this. When I confronted her, she lied about it.
-  - In her rampage, she not only destroyed the trough itself, but also the housing it sits in. I'm suing for a replacement trough and to have the housing repaired, which costs $160 in total.
+  - I am a long-time resident of Flourishing Fields, and a respected member of the community. The defendant, Ms. Heiferson, is my neighbor and former friend.
+  - On the evening of October 11, I invited Ms. Heiferson and several other community members to a [[social gathering|gathering]] at my pen. The farm was going to elect a new livestock representative, and I wanted to run, so I was having a little campaign party to get the support of my friends.
+  - About two hours into the event, we had just had dinner, and Ms. Heiferson went to the [[manure grate|grate]]. She was in there for [[twenty minutes|time]], and I heard a loud crack while she was using it. When she came out I asked if everything was alright, and she said yes but she looked guilty. I [[discovered later|later]] when another guest tried to use the grate that it had been broken.
+  - I confronted Ms. Heiferson about it and she denied breaking my grate. I told her I didn't believe her, and she starting making a scene. When I asked her to leave, she said some very nasty things to me and stormed out.
+  - The evening at that point was pretty much ruined and everyone left shortly after her. I was so embarassed.
+  - I got an estimate to fix my manure grate the next day. It cost $260, and I believe Ms. Heiferson is responsible because she is the one who broke the grate.
 response:
   - I recently moved next door to the plaintiff, Ms. Swineman, at the Flourishing Fields Farm. She was immediately a headache, constantly complaining about noise, or that we would leave things leaning against the fence. She has a bit of a reputation.
   - So then on October 11, I'm in my yard enjoying a milkshake when Ms. Swineman comes up and says the nastiest things to me. Not unusual, but not something I feel like hearing that day, so I go back inside.
@@ -24,18 +27,29 @@ response:
   - I have no interest in breaking any of Ms. Swineman's things. I'd prefer she just leave me alone.
 questioning:
   plaintiff:
-    resident:
-      - j: 2, 4, 6, 8, who do we appreciate?
-      - p: Pigs
-      - d: No we don't
-      - p: Oh, sorry
-    flourishing:
-      - poo
-    respected:
-      - poo
-    neighbor:
-      - poo
-    get_along:
-      - poo
-    best_efforts:
-      - poo
+    gathering:
+      - j: Was this the first time you hosted a social gathering?
+      - p: No, I have had them all over before, multiple times &mdash; Ms. Heiferson included.
+      - p: There had never been an issue before. We had always gotten along fine.
+    grate:
+      - j: Tell me about your manure grate.
+      - p: It's a typical manure grate, same as the ones in all the other pens in the farm.
+      - p: I never had an issue with it before. Ms. Heiferson has even used it.
+      - p: But I guess that was before she put on some weight.
+    time:
+      - j: Did you keep a stopwatch running while she was using your manure grate, Ms. Swineman?
+      - p: No, nothing like that, Your Honor.
+      - p: But I heard the crack right after she went in there, so I was waiting for her to come out, and I happened to notice how long she took.
+    later:
+      - j: If you thought Ms. Heiferson had broken your manure grate, why didn't you check it right away?
+      - p: I wanted to, but I was busy hosting the party, Your Honor. Cooking and entertaining at the same time.
+      - p: I planned to check as soon as I could pull myself away, but another guest went to the grate about 10 minutes later and then came right out and got me.
+      - p: She said that my manure grate was broken, and that she thought it looked like someone had smashed it.
+        inadmissible:
+          type: hearsay
+          weight: 3
+          convo:
+            - j: Don't tell me what she thought or what she said unless she's here to speak for herself.
+            - j: Tell me what you did, and what you saw.
+            - p: I went to look at the manure grate and saw that it was broken. No one else had used it after Ms. Heiferson.
+      - p: So I went in and checked, and sure enough, it was broken. No one had used it after Ms. Heiferson.

@@ -16,7 +16,7 @@ const desk = {
             complaint: "plaintiff",
             response: "defendant",
         };
-        const makeContent = function(array) {
+        const makeContent = function() {
             const Keyword = function(keyword, displayText) {
                 const self = this;
 
@@ -30,43 +30,75 @@ const desk = {
                 }
 
                 return self.div;
-            }
+            };
+
+            const dictName = function(tag) {
+                tag = tag.replace(/_/g, " ");
+                return tools.capitalize(tag);
+            };
+
             const div = document.createElement("div");
-            if (array) {
-                for (let i = 0; i < array.length; i++) {
-                    const p = document.createElement("p");
 
-                    while (array[i].length > 0) {
-                        const span = document.createElement("span");
-                        const startIndex = array[i].indexOf("[[");
-                        let substring;
-                        let button;
+            switch (type) {
+                case "complaint":
+                case "response":
+                    const array = data.current[type];
+                    for (let i = 0; i < array.length; i++) {
+                        const p = document.createElement("p");
 
-                        if (startIndex > 0) {
-                            const endIndex = array[i].indexOf("]]");
-                            const tag = array[i].substring(startIndex + 2, endIndex)
-                            const splitTag = tag.split("|")
-                            
-                            substring = array[i].substring(0, startIndex)
-                            
-                            button = new Keyword(splitTag[1] || splitTag[0], splitTag[0]);
+                        while (array[i].length > 0) {
+                            const span = document.createElement("span");
+                            const startIndex = array[i].indexOf("[[");
+                            let substring;
+                            let button;
 
-                            array[i] = array[i].replace(`[[${tag}]]`, "");
-                        } else {
-                            substring = array[i];
+                            if (startIndex > 0) {
+                                const endIndex = array[i].indexOf("]]");
+                                const tag = array[i].substring(startIndex + 2, endIndex)
+                                const splitTag = tag.split("|")
+                                
+                                substring = array[i].substring(0, startIndex)
+                                
+                                button = new Keyword(splitTag[1] || splitTag[0], splitTag[0]);
+
+                                array[i] = array[i].replace(`[[${tag}]]`, "");
+                            } else {
+                                substring = array[i];
+                            }
+
+                            array[i] = array[i].replace(substring, "");
+
+                            span.innerHTML = substring;
+                            p.appendChild(span);
+                            if (button) {
+                                p.appendChild(button);
+                            }
                         }
-
-                        array[i] = array[i].replace(substring, "");
-
-                        span.innerHTML = substring;
-                        p.appendChild(span);
-                        if (button) {
-                            p.appendChild(button);
-                        }
+                        div.appendChild(p);
                     }
-                    div.appendChild(p);
-                }
+                    break;
+                case "dictionary":
+                    const navStrip = document.createElement("p");
+                    navStrip.style.textAlign = "center";
+                    div.appendChild(navStrip);
+
+                    for (let i = 0; i < data.current.dictionary.length; i++) {
+                        const p = document.createElement("p");
+                        const name = data.current.dictionary[i];
+                        const link = document.createElement("span");
+                        link.innerHTML = `<span style="display:inline-block">| ${dictName(name)} |</span>`;
+                        link.onclick = function() {
+                            div.parentNode.scrollTop = p.offsetTop;
+                        }
+                        p.innerHTML = `<span style="font-weight:bold">${dictName(name)}</span>: 
+                            ${data.dictionary[name]}`;
+
+                        navStrip.appendChild(link);
+                        div.appendChild(p);
+                    }
+                    break;
             }
+
 
             return div;
         };
@@ -83,7 +115,7 @@ const desk = {
 
         self.type = type;
         self.icon = new desk.Icon(self, type);
-        self.content = makeContent(data.current[type])
+        self.content = makeContent();
         self.div = ui.makeDesk.item(type, self.content);
     },
 

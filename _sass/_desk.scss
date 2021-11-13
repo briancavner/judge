@@ -50,8 +50,10 @@
 }
 
 #items .content {
+    position: absolute;
     color: $black;
-    overflow-y: scroll;
+    overflow: auto;
+    background-color: $white;
 }
 
 #items .content p {
@@ -102,12 +104,10 @@
 }
 
     #items .complaint .content {
-        position: absolute;
         top: 5%;
         left: 51%;
         width: 40%;
         height: 90%;
-        background-color: $white;
     }
 
 #items .response {
@@ -115,12 +115,10 @@
 }
 
     #items .response .content {
-        position: absolute;
         top: 5%;
         left: 51%;
         width: 40%;
         height: 90%;
-        background-color: $white;
     }
 
 #items .transcript {
@@ -130,6 +128,13 @@
 #items .dictionary {
     background-image: url("/assets/img/dictionaryBig.png");
 }
+
+    #items .dictionary .content {
+        top: 3%;
+        left: 48%;
+        width: 47%;
+        height: 87%;
+    }
 
 #blocker {
     width: 100%;

@@ -3,6 +3,23 @@ const tools = {
         return Math.floor(Math.random() * (b - a + 1) + a);
     },
 
+    capitalize: function(string) {
+        return string.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())));
+    },
+
+    pickOne: function(array) {
+        return array[tools.rand(0, array.length - 1)];
+    },
+
+    shuffle: function(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const hold = array[i];
+            array[i] = array[j];
+            array[j] = hold;
+        }
+    },
+
     testQuestioning: function(caseNum) {
         const testCase = data.cases[`${caseNum}`];
         const pKeywords = Object.keys(testCase.questioning.plaintiff);

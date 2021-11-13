@@ -10,32 +10,73 @@ const ui = {
         }
     },
 
-    speak: function(speaker, message) {
-        document.body.onclick = null;
-        if (arguments.length === 0) {
-            if (ui.speechQueue.length === 0) {
-                ui.clearSpeak();
-                return;
-            }
+    speak: function() {
+        let speaker;
+        let message;
 
-            const nextLine = ui.speechQueue.splice(0, 1)[0];
-            speaker = Object.keys(nextLine)[0];
-            message = nextLine[speaker];
+        ui.clearSpeak();
+
+        if (ui.speechQueue.length === 0) {
+            ui.divs.respond.style.display = null;
+            return;
         }
+
+        const nextLine = ui.speechQueue.splice(0, 1)[0];
+
+        // Is there a better way than this?
+        if (nextLine.j) {
+            speaker = "j";
+        } else if (nextLine.p) {
+            speaker = "p";
+        } else {
+            speaker = "d";
+        }
+        message = nextLine[speaker];
 
         const bubble = document.createElement("div");
 
         bubble.classList.add(`${speaker}Speech`, "speech")
         bubble.innerHTML = message;
 
-        ui.clearSpeak();
         ui.divs.bubble = bubble;
         ui.divs.speech.appendChild(bubble);
         setTimeout(function() {
-            document.body.onclick = function() {
+            ui.respond(speaker, message, nextLine.noButtons, nextLine.inadmissible)
+        }, 600)
+    },
+
+    respond: function(speaker, message, noButtons, inadmissible) {
+        const cont = document.createElement("button");
+        cont.innerHTML = "Continue";
+        cont.onclick = function() {
+            if (inadmissible) {
+                score.subtract(inadmissible, message);
+            }
+            ui.divs.respond.innerHTML = "";
+            ui.speak();
+        }
+        ui.divs.respond.appendChild(cont);
+
+        if (speaker !== "j" && !noButtons) {
+            const inad = document.createElement("button");
+            inad.innerHTML = "Inadmissible";
+            inad.onclick = function() {
+                ui.divs.respond.innerHTML = "";
+                ui.speechQueue.splice(0, ui.speechQueue.length);
+                if (inadmissible) {
+                    ui.speechQueue = data.noButtons(inadmissible.convo);
+                    score.add(inadmissible, message);
+                } else {
+                    ui.speechQueue.push(data.randomLine("j", "inadmissible"));
+                    ui.speechQueue.push(data.randomLine(speaker, "admonished"));
+                    score.miscall("inadmissible", message);
+                }
                 ui.speak();
             }
-        }, 600)
+            ui.divs.respond.appendChild(inad)
+        }
+
+        ui.divs.respond.style.display = "block";
     },
 
     makeLitigants: function() {
@@ -150,33 +191,27 @@ const ui = {
     },
 
     init: function() {
-        ui.divs.backdrop = document.createElement("div");
-        ui.divs.canvas = document.createElement("div");
-        ui.divs.items = document.createElement("div");
-        ui.divs.desk = document.createElement("div");
-        ui.divs.plaintiff = document.createElement("div");
-        ui.divs.defendant = document.createElement("div");
-        ui.divs.blocker = document.createElement("div");
-        ui.divs.speech = document.createElement("div");
-        
-        ui.divs.backdrop.id = "backdrop";
-        ui.divs.canvas.id = "canvas";
-        ui.divs.items.id = "items";
-        ui.divs.desk.id = "desk";
-        ui.divs.plaintiff.id = "plaintiff";
-        ui.divs.defendant.id = "defendant";
-        ui.divs.blocker.id = "blocker";
+        const divs = {
+            body: ["backdrop", "canvas"],
+            canvas: ["desk", "plaintiff", "defendant", "speech", "respond", "blocker", "items"]
+        };
+
+        for (let i = 0; i < divs.body.length; i++) {
+            const id = divs.body[i];
+            
+            ui.divs[id] = document.createElement("div");
+            ui.divs[id].id = id;
+            document.body.appendChild(ui.divs[id]);
+        }
+
+        for (let i = 0; i < divs.canvas.length; i++) {
+            const id = divs.canvas[i];
+            ui.divs[id] = document.createElement("div");
+            ui.divs[id].id = id;
+            ui.divs.canvas.appendChild(ui.divs[id]);
+        }
 
         ui.divs.plaintiff.classList.add("litigant");
         ui.divs.defendant.classList.add("litigant");
-
-        ui.divs.canvas.appendChild(ui.divs.desk);
-        ui.divs.canvas.appendChild(ui.divs.plaintiff);
-        ui.divs.canvas.appendChild(ui.divs.defendant);
-        ui.divs.canvas.appendChild(ui.divs.speech);
-        ui.divs.canvas.appendChild(ui.divs.blocker);
-        ui.divs.canvas.appendChild(ui.divs.items);
-        document.body.appendChild(ui.divs.backdrop);
-        document.body.appendChild(ui.divs.canvas);
     },
 };

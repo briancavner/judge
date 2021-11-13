@@ -1,0 +1,57 @@
+title: A Petition Pursuant to a Pulverized Pig Pen
+summary:
+  - Plaintiff Sally Swineman says that defendant Hailey Heiferson damaged her feeding trough, and is suing for $160, the cost to replace it.
+  - Ms. Heiferson says that she has no proof for her accusations, and that it could have been anyone in the barnyard due to Ms. Swineman's borish attitude.
+plaintiff:
+  name: Paula Piglet
+  appearance:
+    head: 3
+    body: 6
+defendant:
+  name: Carla Cowson
+  appearance:
+    head: 6
+    body: 2
+dictionary: [cause_of_action, standard_of_evidence, relevance, hearsay, statement_by_party_opponent]
+complaint:
+  - I am a [[long-time resident|resident]] of [[Flourishing Fields|flourishing]], and a [[respected member|respected]] of the community. The defendant, Ms. Heiferson, is my [[neighbor]], and she is someone with whom I have [[never been able to get along|get_along]] despite my [[best efforts|best_efforts]].
+  - On the night of October 11, I was taking my piglets for an evening walk. We came home, and I put my piglets to bed. I felt a craving for a snack before bed, as is common for anyone, and went out to the trough. I found it smashed in multiple places, clearly intentionally.
+  - I [[knew right away|knew]] that Ms. Heiferson had done it. She's jealous of me, and told me that she would do something like this. When I confronted her, she lied about it.
+  - In her rampage, she not only destroyed the trough itself, but also the housing it sits in. I'm suing for a replacement trough and to have the housing repaired, which costs $160 in total.
+response:
+  - I recently moved next door to the plaintiff, Ms. Swineman, at the Flourishing Fields Farm. She was immediately a headache, constantly complaining about noise, or that we would leave things leaning against the fence. She has a bit of a reputation.
+  - So then on October 11, I'm in my yard enjoying a milkshake when Ms. Swineman comes up and says the nastiest things to me. Not unusual, but not something I feel like hearing that day, so I go back inside.
+  - The next time I saw her was that night when she came over and said I had broken her feeding trough, as if I would ever want to touch that disgusting thing. So I told her that I wouldn't do something like that, and she just told me that she'd see me in court, and now here we are.
+  - I have no interest in breaking any of Ms. Swineman's things. I'd prefer she just leave me alone.
+questioning:
+  plaintiff:
+    resident:
+      - j: 2, 4, 6, 8, who do we appreciate?
+      - p: Pigs
+      - d: No we don't
+        noButtons: true
+      - p: Oh, sorry
+    flourishing:
+      - poo
+    respected:
+      - poo
+    neighbor:
+      - poo
+    get_along:
+      - poo
+    best_efforts:
+      - poo
+    knew:
+      - j: What makes you so confident that Ms. Heiferson was responsible for damaging your trough?
+      - p: I know she did it, Your Honor. I don't have any doubt.
+        inadmissible:
+          type: relevance
+          weight: 3
+          convo:
+            - j: You can't tell me that, you psycho moron, I wish you were dead!
+            - p: That's way harsh.
+          catch: Correct, that was irrelevant
+          miss: You missed an irrelevant thing
+      - j: Don't tell me what you "know". Tell me what you saw or what you heard that makes you believe Ms. Heiferson was responsible.
+      - p: She told me she did it.
+      - d: This isn't true, Your Honor!

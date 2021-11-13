@@ -1,7 +1,9 @@
 ---
 js:
     - tools
+    - audio
     - ui
+    - score
     - desk
     - data
     - init
