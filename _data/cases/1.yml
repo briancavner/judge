@@ -14,7 +14,7 @@ defendant:
     body: 2
 dictionary: [cause_of_action, standard_of_evidence, relevance, hearsay, statement_by_party_opponent]
 complaint:
-  - I am a long-time resident of Flourishing Fields, and a respected member of the community. The defendant, Ms. Heiferson, is my neighbor and former friend.
+  - I am a long-time [[resident]] of [[Flourishing]] Fields, and a respected member of the community. The defendant, Ms. Heiferson, is my neighbor and former friend.
   - On the evening of October 11, I invited Ms. Heiferson and several other community members to a [[social gathering|gathering]] at my pen. The farm was going to elect a new livestock representative, and I wanted to run, so I was having a little campaign party to get the support of my friends.
   - About two hours into the event, we had just had dinner, and Ms. Heiferson went to the [[manure grate|grate]]. She was in there for [[twenty minutes|time]], and I heard a loud crack while she was using it. When she came out I asked if everything was alright, and she said yes but she looked guilty. I [[discovered later|later]] when another guest tried to use the grate that it had been broken.
   - I confronted Ms. Heiferson about it and she denied breaking my grate. I told her I didn't believe her, and she starting making a scene. When I asked her to leave, she said some very nasty things to me and stormed out.
@@ -27,6 +27,15 @@ response:
   - I have no interest in breaking any of Ms. Swineman's things. I'd prefer she just leave me alone.
 questioning:
   plaintiff:
+    resident:
+      - j: Do you like pie?
+      - p: I hate pie, honestly
+        contradiction: pie
+      - j: That's weird.
+    Flourishing:
+      - j: What's your favorite dessert?
+      - p: I friggin' love pie!
+        contradiction: pie
     gathering:
       - j: Was this the first time you hosted a social gathering?
       - p: No, I have had them all over before, multiple times &mdash; Ms. Heiferson included.
@@ -36,6 +45,9 @@ questioning:
       - p: It's a typical manure grate, same as the ones in all the other pens in the farm.
       - p: I never had an issue with it before. Ms. Heiferson has even used it.
       - p: But I guess that was before she put on some weight.
+        sass:
+          convo:
+            - j: Okay, well let me tell you something, madam, you are no petite piglet yourself.
     time:
       - j: Did you keep a stopwatch running while she was using your manure grate, Ms. Swineman?
       - p: No, nothing like that, Your Honor.
@@ -53,3 +65,8 @@ questioning:
             - j: Tell me what you did, and what you saw.
             - p: I went to look at the manure grate and saw that it was broken. No one else had used it after Ms. Heiferson.
       - p: So I went in and checked, and sure enough, it was broken. No one had used it after Ms. Heiferson.
+contradictions:
+  pie:
+    - j: Uh, are you a pie liar? A piar?!
+    - p: That pun is dumb, Your Honor
+    - j: You're literally dead to me.

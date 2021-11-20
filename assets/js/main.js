@@ -4,6 +4,7 @@ js:
     - audio
     - ui
     - score
+    - dialogue
     - desk
     - data
     - init

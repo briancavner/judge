@@ -73,30 +73,37 @@
     position: absolute;
     background-color: $black;
     border: 2px solid $white;
-    top: 70%;
-    bottom: 10%;
-    left: 30%;
-    right: 30%;
+    top: 75%;
+    bottom: 5%;
+    left: 25%;
+    right: 25%;
     display: none;
     overflow: hidden;
+    text-align: center;
 }
 
 #respond button{
     position: relative;
+    top: 15%;
     background: #333;
-    color: #ccc;
-    margin: 2%;
-    width: 200px;
-    height: 60px;
+    color: $white;
+    margin: 0 (10% / 6);
+    width: 30%;
+    height: 70%;
     border: 0;
-    font-size: 18px;
+    font-size: 2vmin;
+    text-transform: uppercase;
     border-radius: 4px;
     transition: .6s;
     overflow: hidden;
-    &:focus{
+    &:first-letter {
+        font-weight: bold;
+        font-size: 150%;
+    }
+    &:focus {
         outline: 0;
     }
-    &:before{
+    &:before {
         content: '';
         display: block;
         position: absolute;
@@ -109,7 +116,7 @@
         filter: blur(30px);
         transform: translateX(-100px)  skewX(-15deg);
     }
-    &:after{
+    &:after {
         content: '';
         display: block;
         position: absolute;
@@ -122,18 +129,36 @@
         filter: blur(5px);
         transform: translateX(-100px) skewX(-15deg);
     }
-    &:hover{
-        background: #338033;
+    &:hover {
+        background: #bbb;
         cursor: pointer;
-        &:before{
+        &:before {
           transform: translateX(300px)  skewX(-15deg);  
           opacity: 0.6;
           transition: .7s;
         }
-        &:after{
+        &:after {
           transform: translateX(300px) skewX(-15deg);  
           opacity: 1;
           transition: .7s;
+        }
+    }
+    &.continue {
+        background: #4C674C;
+        &:hover {
+            background: #338033
+        }
+    }
+    &.inadmissible {
+        background: #AF9392;
+        &:hover {
+            background: #F0544F
+        }
+    }
+    &.sass {
+        background: #A0967E;
+        &:hover {
+            background: #E3B23C
         }
     }
 }

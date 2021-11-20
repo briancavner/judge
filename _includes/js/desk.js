@@ -24,9 +24,10 @@ const desk = {
                 self.div.classList.add("tag")
                 self.div.innerHTML = displayText;
                 self.div.onclick = function() {
+                    // This can be better, it's all kind of hacky. Don't edit speech.queue directly
                     ui.divs.blocker.onclick(); // Triggers closing the open Item
-                    ui.speechQueue = data.current.questioning[writer[type]][keyword].slice();
-                    ui.speak();
+                    speech.queue = data.current.questioning[writer[type]][keyword].slice();
+                    speech.speak();
                 }
 
                 return self.div;

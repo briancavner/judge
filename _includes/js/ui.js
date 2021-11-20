@@ -1,82 +1,122 @@
 const ui = {
     divs: {},
     animations: {},
-    speechQueue: [],
 
-    clearSpeak: function() {
-        if (ui.divs.bubble) {
-            ui.divs.bubble.remove();
-            ui.divs.bubble = null;
-        }
-    },
-
-    speak: function() {
-        let speaker;
-        let message;
-
-        ui.clearSpeak();
-
-        if (ui.speechQueue.length === 0) {
-            ui.divs.respond.style.display = null;
-            return;
-        }
-
-        const nextLine = ui.speechQueue.splice(0, 1)[0];
-
-        // Is there a better way than this?
-        if (nextLine.j) {
-            speaker = "j";
-        } else if (nextLine.p) {
-            speaker = "p";
-        } else {
-            speaker = "d";
-        }
-        message = nextLine[speaker];
-
-        const bubble = document.createElement("div");
-
-        bubble.classList.add(`${speaker}Speech`, "speech")
-        bubble.innerHTML = message;
-
-        ui.divs.bubble = bubble;
-        ui.divs.speech.appendChild(bubble);
-        setTimeout(function() {
-            ui.respond(speaker, message, nextLine.noButtons, nextLine.inadmissible)
-        }, 600)
-    },
-
-    respond: function(speaker, message, noButtons, inadmissible) {
-        const cont = document.createElement("button");
-        cont.innerHTML = "Continue";
-        cont.onclick = function() {
-            if (inadmissible) {
-                score.subtract(inadmissible, message);
+    speech: {
+        close: function(respond = false) {
+            if (ui.divs.bubble) {
+                ui.divs.bubble.remove();
+                ui.divs.bubble = null;
             }
-            ui.divs.respond.innerHTML = "";
-            ui.speak();
-        }
-        ui.divs.respond.appendChild(cont);
 
-        if (speaker !== "j" && !noButtons) {
-            const inad = document.createElement("button");
-            inad.innerHTML = "Inadmissible";
-            inad.onclick = function() {
-                ui.divs.respond.innerHTML = "";
-                ui.speechQueue.splice(0, ui.speechQueue.length);
+            if (respond) {
+                ui.divs.respond.style.display = null;
+            }
+        },
+
+        speak: function(speaker, message) {
+            const bubble = document.createElement("div");
+
+            bubble.classList.add(`${speaker}Speech`, "speech")
+            bubble.innerHTML = message;
+
+            ui.speech.close();
+            ui.divs.bubble = bubble;
+            ui.divs.speech.appendChild(bubble);
+        },
+
+        respond: function(speaker, message, noButtons, inadmissible, sass) {
+            // This can probably be improved. Get rid of directly editing speech.queue
+            const cont = document.createElement("button");
+            cont.innerHTML = "Continue";
+            cont.classList.add("continue");
+            cont.onclick = function() {
                 if (inadmissible) {
-                    ui.speechQueue = data.noButtons(inadmissible.convo);
-                    score.add(inadmissible, message);
-                } else {
-                    ui.speechQueue.push(data.randomLine("j", "inadmissible"));
-                    ui.speechQueue.push(data.randomLine(speaker, "admonished"));
-                    score.miscall("inadmissible", message);
+                    score.subtract(inadmissible, message);
                 }
-                ui.speak();
+                ui.divs.respond.innerHTML = "";
+                speech.speak();
             }
-            ui.divs.respond.appendChild(inad)
-        }
+            ui.divs.respond.appendChild(cont);
 
-        ui.divs.respond.style.display = "block";
+            if (speaker !== "j" && !noButtons) {
+                const inad = document.createElement("button");
+                const sassy = document.createElement("button");
+                inad.innerHTML = "Inadmissible";
+                inad.classList.add("inadmissible");
+                sassy.innerHTML = "Sass";
+                sassy.classList.add("sass");
+                inad.onclick = function() {
+                    ui.divs.respond.innerHTML = "";
+                    speech.queue.splice(0, speech.queue.length);
+                    if (inadmissible) {
+                        speech.queue = data.noButtons(inadmissible.convo);
+                        score.add(inadmissible, message);
+                    } else {
+                        speech.queue.push(data.randomLine("j", "admonish"));
+                        speech.queue.push(data.randomLine(speaker, "admonished"));
+                        score.miscall("inadmissible", message);
+                    }
+                    speech.speak();
+                }
+                sassy.onclick = function() {
+                    ui.divs.respond.innerHTML = "";
+                    if (sass) {
+                        speech.queue = data.noButtons(sass.convo).concat(speech.queue);
+                        score.add(sass, message);
+                    } else {
+                        speech.queue = [data.randomLine("j", "admonish"), data.randomLine(speaker, "admonished")].concat(speech.queue)
+                        score.miscall("sass", message);
+                    }
+                    speech.speak();
+                }
+                ui.divs.respond.appendChild(inad)
+                ui.divs.respond.appendChild(sassy)
+            }
+
+            ui.divs.respond.style.display = "block";
+        },
+
+        transcribe: function(speaker, message, newline, contradiction) {
+            const span = document.createElement("span");
+            span.classList.add("contradictory");
+            span.innerHTML = message;
+            span.onclick = function() {
+                transcript.check(speaker, message, contradiction);
+            }
+            if (newline) {
+                const p = document.createElement("p");
+                p.innerHTML = `<span style="font-weight:bold">${data.speakers[speaker]}</span>: `;
+                p.appendChild(span);
+
+                ui.divs.transcript.appendChild(p);
+                ui.divs.transcriptLine = p;
+            } else {
+                ui.divs.transcriptLine.appendChild(span);
+            }
+        },
+    },
+
+    contradiction: function(speaker, line1, line2) {
+        const div = ui.divs.contradiction;
+        const h1 = document.createElement("h1");
+        const h2 = document.createElement("h2");
+        const p1 = document.createElement("p");
+        const p2 = document.createElement("p");
+        
+        h1.innerHTML = "Contradiction?";
+        h2.innerHTML = data.speakers[speaker];
+        p1.innerHTML = line1;
+        
+        div.innerHTML = "";
+        div.appendChild(h1);
+        div.appendChild(h2);
+        div.appendChild(p1);
+
+        if (line2) {
+            p2.innerHTML = line2;
+            div.appendChild(p2);
+        }
     },
 
     makeLitigants: function() {
@@ -151,6 +191,13 @@ const ui = {
             
             div.classList.add("item", type);
             div.appendChild(contentDiv);
+
+            if (type === "transcript") {
+                ui.divs.contradiction = document.createElement("div");
+                ui.divs.contradiction.classList.add("content2");
+                ui.divs.transcript = contentDiv;
+                div.appendChild(ui.divs.contradiction);
+            }
 
             return div;
         },

@@ -9,6 +9,12 @@ const data = {
 
     genericLines: {{ site.data.genericLines | jsonify }},
 
+    speakers: {
+        j: "Judge",
+        p: "Plaintiff",
+        d: "Defendant",
+    },
+
     loadCase: function(caseNum) {
         data.current = data.cases[`${caseNum}`];
         desk.make();

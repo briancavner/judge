@@ -123,6 +123,37 @@
 
 #items .transcript {
     background-image: url("/assets/img/transcriptBig.png");
+
+    & .content {
+        top: 0;
+        left: 17%;
+        width: 39%;
+        height: 83%;
+    }
+
+    & .content2 {
+        position: absolute;
+        top: 10%;
+        left: 61%;
+        width: 21%;
+        height: 79%;
+        overflow: hidden;
+        color: $black;
+        // background-color: $white;
+    }
+
+    & p {
+        text-indent: -1.5em;
+        margin-left: 2.5em;
+    }
+
+    & .contradictory {
+        cursor: pointer;
+
+        &:hover {
+            background-color: lightblue;
+        }
+    }
 }
 
 #items .dictionary {
