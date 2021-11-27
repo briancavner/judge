@@ -1,5 +1,6 @@
 ---
 js:
+    - tester
     - tools
     - audio
     - ui

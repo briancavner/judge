@@ -16,7 +16,8 @@ const desk = {
             complaint: "plaintiff",
             response: "defendant",
         };
-        const makeContent = function() {
+
+        const tagize = function(string) {
             const Keyword = function(keyword, displayText) {
                 const self = this;
 
@@ -24,15 +25,49 @@ const desk = {
                 self.div.classList.add("tag")
                 self.div.innerHTML = displayText;
                 self.div.onclick = function() {
-                    // This can be better, it's all kind of hacky. Don't edit speech.queue directly
-                    ui.divs.blocker.onclick(); // Triggers closing the open Item
-                    speech.queue = data.current.questioning[writer[type]][keyword].slice();
-                    speech.speak();
+                    ui.divs.blocker.onclick(); // Is there a better way to triggers closing the open Item?
+                    speech.speak(data.current.questioning[writer[type]][keyword].slice());
+                    self.div.classList.remove("tag");
+                    self.div.classList.add("strikeTag");
+                    self.div.onclick = null;
                 }
 
                 return self.div;
             };
+            const p = document.createElement("p");
 
+            while (string.length > 0) {
+                const span = document.createElement("span");
+                const startIndex = string.indexOf("[[");
+                let substring;
+                let button;
+
+                if (startIndex > 0) {
+                    const endIndex = string.indexOf("]]");
+                    const tag = string.substring(startIndex + 2, endIndex)
+                    const splitTag = tag.split("|")
+                    
+                    substring = string.substring(0, startIndex)
+                    
+                    button = new Keyword(splitTag[1] || splitTag[0], splitTag[0]);
+
+                    string = string.replace(`[[${tag}]]`, "");
+                } else {
+                    substring = string;
+                }
+
+                string = string.replace(substring, "");
+
+                span.innerHTML = substring;
+                p.appendChild(span);
+                if (button) {
+                    p.appendChild(button);
+                }
+            }
+            return p;
+        };
+        
+        const makeContent = function() {
             const dictName = function(tag) {
                 tag = tag.replace(/_/g, " ");
                 return tools.capitalize(tag);
@@ -45,36 +80,7 @@ const desk = {
                 case "response":
                     const array = data.current[type];
                     for (let i = 0; i < array.length; i++) {
-                        const p = document.createElement("p");
-
-                        while (array[i].length > 0) {
-                            const span = document.createElement("span");
-                            const startIndex = array[i].indexOf("[[");
-                            let substring;
-                            let button;
-
-                            if (startIndex > 0) {
-                                const endIndex = array[i].indexOf("]]");
-                                const tag = array[i].substring(startIndex + 2, endIndex)
-                                const splitTag = tag.split("|")
-                                
-                                substring = array[i].substring(0, startIndex)
-                                
-                                button = new Keyword(splitTag[1] || splitTag[0], splitTag[0]);
-
-                                array[i] = array[i].replace(`[[${tag}]]`, "");
-                            } else {
-                                substring = array[i];
-                            }
-
-                            array[i] = array[i].replace(substring, "");
-
-                            span.innerHTML = substring;
-                            p.appendChild(span);
-                            if (button) {
-                                p.appendChild(button);
-                            }
-                        }
+                        const p = tagize(array[i]);
                         div.appendChild(p);
                     }
                     break;
@@ -112,7 +118,19 @@ const desk = {
         self.close = function() {
             ui.showIcon(self.icon.div);
             ui.hideItem(self.div);
-        }
+        };
+
+        self.addendum = function(array) {
+            const h2 = document.createElement("h2");
+            h2.innerHTML = "Addendum";
+
+            self.content.appendChild(h2);
+
+            for (let i = 0; i < array.length; i++) {
+                const p = tagize(array[i])
+                self.content.appendChild(p);
+            }
+        };
 
         self.type = type;
         self.icon = new desk.Icon(self, type);

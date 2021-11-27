@@ -25,8 +25,7 @@ const ui = {
             ui.divs.speech.appendChild(bubble);
         },
 
-        respond: function(speaker, message, noButtons, inadmissible, sass) {
-            // This can probably be improved. Get rid of directly editing speech.queue
+        respond: function(speaker, message, noButtons, inadmissible, admissible, sass) {
             const cont = document.createElement("button");
             cont.innerHTML = "Continue";
             cont.classList.add("continue");
@@ -48,24 +47,26 @@ const ui = {
                 sassy.classList.add("sass");
                 inad.onclick = function() {
                     ui.divs.respond.innerHTML = "";
-                    speech.queue.splice(0, speech.queue.length);
+                    speech.empty();
                     if (inadmissible) {
-                        speech.queue = data.noButtons(inadmissible.convo);
+                        speech.speak(data.noButtons(inadmissible.convo));
                         score.add(inadmissible, message);
                     } else {
-                        speech.queue.push(data.randomLine("j", "admonish"));
-                        speech.queue.push(data.randomLine(speaker, "admonished"));
-                        score.miscall("inadmissible", message);
+                        speech.speak(data.randomLine("j", "admonish"), data.randomLine(speaker, "admonished"));
+                        if (admissible) {
+                            score.miscall("inadmissible", message, admissible.note)
+                        } else {
+                            score.miscall("inadmissible", message);
+                        }
                     }
-                    speech.speak();
                 }
                 sassy.onclick = function() {
                     ui.divs.respond.innerHTML = "";
                     if (sass) {
-                        speech.queue = data.noButtons(sass.convo).concat(speech.queue);
+                        speech.addToFront(data.noButtons(sass.convo));
                         score.add(sass, message);
                     } else {
-                        speech.queue = [data.randomLine("j", "admonish"), data.randomLine(speaker, "admonished")].concat(speech.queue)
+                        speech.addToFront(data.randomLine("j", "admonish"), data.randomLine(speaker, "admonished"))
                         score.miscall("sass", message);
                     }
                     speech.speak();

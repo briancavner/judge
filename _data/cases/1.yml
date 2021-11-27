@@ -1,72 +1,123 @@
 title: A Petition Pursuant to a Pulverized Pig Pen
 summary:
-  - Plaintiff Sally Swineman says that defendant Hailey Heiferson broke her manure grate during an important social gathering at her pen, leading to embarassment and financial loss. She is suing for $260, the cost to replace her grate.
-  - Ms. Heiferson says that many people had used the manure grate that night, and that she was not the one to break it.
+  - Plaintiff <<pname>> says that defendant <<dname>> broke her manure grate during an important social gathering at her pen, leading to embarassment and financial loss. She is suing for $260, the cost to replace her grate.
+  - <<dtlname>> says that many people had used the manure grate that night, and that she was not the one to break it.
 plaintiff:
-  name: Paula Piglet
+  name: Sally Swineman
+  title: Ms.
   appearance:
     head: 3
     body: 6
 defendant:
-  name: Carla Cowson
+  name: Carla Heiferson
+  title: Ms.
   appearance:
     head: 6
     body: 2
-dictionary: [cause_of_action, standard_of_evidence, relevance, hearsay, statement_by_party_opponent]
+dictionary:
+  - cause_of_action
+  - standard_of_evidence
+  - relevance
+  - hearsay
+  - statement_by_party_opponent
 complaint:
-  - I am a long-time [[resident]] of [[Flourishing]] Fields, and a respected member of the community. The defendant, Ms. Heiferson, is my neighbor and former friend.
-  - On the evening of October 11, I invited Ms. Heiferson and several other community members to a [[social gathering|gathering]] at my pen. The farm was going to elect a new livestock representative, and I wanted to run, so I was having a little campaign party to get the support of my friends.
-  - About two hours into the event, we had just had dinner, and Ms. Heiferson went to the [[manure grate|grate]]. She was in there for [[twenty minutes|time]], and I heard a loud crack while she was using it. When she came out I asked if everything was alright, and she said yes but she looked guilty. I [[discovered later|later]] when another guest tried to use the grate that it had been broken.
-  - I confronted Ms. Heiferson about it and she denied breaking my grate. I told her I didn't believe her, and she starting making a scene. When I asked her to leave, she said some very nasty things to me and stormed out.
+  - I am a long-time resident of Flourishing Fields, and a respected member of the community. The defendant, <<dtlname>>, is my neighbor and former friend.
+  - On the evening of October 11, I invited <<dtlname>> and several other community members to a [[social gathering|gathering]] at my pen. The farm was going to elect a new livestock representative, and I wanted to run, so I was having a little campaign party to get the support of my friends.
+  - About two hours into the event, we had just had dinner, and <<dtlname>> went to the [[manure grate|grate]]. She was in there for [[twenty minutes|time]], and I heard a loud crack while she was using it. When she came out I asked if everything was alright, and she said yes but she looked guilty. I [[discovered later|later]] when another guest tried to use the grate that it had been broken.
+  - I confronted <<dtlname>> about it and she denied breaking my grate. I told her I didn't believe her, and she starting making a scene. When I asked her to leave, she said some very nasty things to me and stormed out.
   - The evening at that point was pretty much ruined and everyone left shortly after her. I was so embarassed.
-  - I got an estimate to fix my manure grate the next day. It cost $260, and I believe Ms. Heiferson is responsible because she is the one who broke the grate.
+  - I got an estimate to fix my manure grate the next day. It cost $260, and I believe <<dtlname>> is responsible because she is the one who broke the grate.
 response:
-  - I recently moved next door to the plaintiff, Ms. Swineman, at the Flourishing Fields Farm. She was immediately a headache, constantly complaining about noise, or that we would leave things leaning against the fence. She has a bit of a reputation.
-  - So then on October 11, I'm in my yard enjoying a milkshake when Ms. Swineman comes up and says the nastiest things to me. Not unusual, but not something I feel like hearing that day, so I go back inside.
-  - The next time I saw her was that night when she came over and said I had broken her feeding trough, as if I would ever want to touch that disgusting thing. So I told her that I wouldn't do something like that, and she just told me that she'd see me in court, and now here we are.
-  - I have no interest in breaking any of Ms. Swineman's things. I'd prefer she just leave me alone.
+  - My neighbor, <<ptlname>>, invited me and some other neighbors over for dinner and to chit-chat. I had been over [[several times|several]] and considered her a good friend.
+  - <<ptlname>> started talking about some kind of election she was running in, and I left to use the grate. There wasn't any problem with it when I got in there.
+  - After about [[twenty minutes|minutes]] I came back, and very shortly afterward, <<ptlname>> started interrogating me. I didn't know what it was about at first, but then she said I had broken her grate and wanted me to pay for it.
+addendums:
+  response1:
+    - I was too embarassed to admit it, which is why I initially lied and pretended that I didn't know what happened to the manure grate.
+    - When I was [[using it|using]], I [[heard a sort of pop|pop]], and then when I checked the grate, I saw that it had broken. I tried to clean up the mess as best as I could while I was trying to think of what to say to <<ptlname>>.
+    - I decided I wanted to tell her the truth privately, but when I saw how upset she was, and that she expected me to pay for it, I was too nervous to say anything at all. It was an accident, and [[I didn't think I should be responsible|responsible]] for fixing her grate. 
+    - I hoped she would eventually get less angry so I could admit things to her then, but then I found out she was suing me and never got the chance.
 questioning:
   plaintiff:
-    resident:
-      - j: Do you like pie?
-      - p: I hate pie, honestly
-        contradiction: pie
-      - j: That's weird.
-    Flourishing:
-      - j: What's your favorite dessert?
-      - p: I friggin' love pie!
-        contradiction: pie
     gathering:
       - j: Was this the first time you hosted a social gathering?
-      - p: No, I have had them all over before, multiple times &mdash; Ms. Heiferson included.
+      - p: No, I have had them all over before, multiple times &mdash; <<dtlname>> included.
       - p: There had never been an issue before. We had always gotten along fine.
     grate:
       - j: Tell me about your manure grate.
       - p: It's a typical manure grate, same as the ones in all the other pens in the farm.
-      - p: I never had an issue with it before. Ms. Heiferson has even used it.
+      - p: I never had an issue with it before. <<dtlname>> has even used it.
       - p: But I guess that was before she put on some weight.
         sass:
           convo:
-            - j: Okay, well let me tell you something, madam, you are no petite piglet yourself.
+            - j: Let me tell you something, madam, you are no petite piglet yourself, so I don't want to hear your comments about her weight.
+            - d: Thank you, Your Honor.
+        admissible:
+          note: Even though the plaintiff said this as a rude personal attack, the fact that the defendant gained weight might be relevant in determining how and why the grate broke. Ironically, the plaintiff's insult ends up being evidence against her case; if the grate broke as a result of the defendant's weight, it suggests that she did not intentionally or negligently break it.
     time:
-      - j: Did you keep a stopwatch running while she was using your manure grate, Ms. Swineman?
+      - j: Did you keep a stopwatch running while she was using your manure grate, <<ptlname>>?
       - p: No, nothing like that, Your Honor.
       - p: But I heard the crack right after she went in there, so I was waiting for her to come out, and I happened to notice how long she took.
     later:
-      - j: If you thought Ms. Heiferson had broken your manure grate, why didn't you check it right away?
+      - j: If you thought <<dtlname>> had broken your manure grate, why didn't you check it right away?
       - p: I wanted to, but I was busy hosting the party, Your Honor. Cooking and entertaining at the same time.
       - p: I planned to check as soon as I could pull myself away, but another guest went to the grate about 10 minutes later and then came right out and got me.
       - p: She said that my manure grate was broken, and that she thought it looked like someone had smashed it.
         inadmissible:
           type: hearsay
-          weight: 3
           convo:
             - j: Don't tell me what she thought or what she said unless she's here to speak for herself.
             - j: Tell me what you did, and what you saw.
-            - p: I went to look at the manure grate and saw that it was broken. No one else had used it after Ms. Heiferson.
-      - p: So I went in and checked, and sure enough, it was broken. No one had used it after Ms. Heiferson.
+            - p: I went to look at the manure grate and saw that it was broken. No one else had used it after <<dtlname>>.
+          note: Hearsay is problematic because it is unreliable. There is no way to examine the truth of the claim "it looked like someone had smashed it" unless the person who said that is in court.
+      - p: So I went in and checked, and sure enough, it was broken. No one had used it after <<dtlname>>.
+  defendant:
+    several:
+      - j: When you had gone to <<ptlname>>'s residence in the past, had you used her manure grate?
+      - d: Yes, Your Honor. Several times. I never had an issue with it before.
+        contradiction: unused
+      - d: I'm not sure why <<ptlname>> would think I would break her grate. I had no reason at all to do that.
+    minutes:
+      - j: Is 20 minutes at the manure grate a typical amount of time for you?
+      - d: Oh, no Your Honor, but it wasn't like I was using that time to break the grate, or anything.
+      - d: It was just hard for me to figure out how to use the grate. It took me several minutes to figure out.
+        contradiction: unused
+        sass:
+          convo:
+            - j: You don't strike me as that dumb of a woman, <<dtlname>>.
+            - d: Thank you, Your Honor.
+            - d: ...I think?
+    pop:
+      - j: Describe the pop you heard and what you were doing at the time, <<dtlname>>.
+      - d: It was just a "pop". It sounded like something came loose or maybe cracked below me.
+      - d: I wasn't doing anything out of the ordinary, Your Honor. Just standing there.
+      - d: I hadn't started, you know, "going" yet. It was only a few seconds after I put my weight on the grate.
+    using:
+      - j: Were you doing anything unusual with or on the manure grate?
+      - d: No, Your Honor, just using it normally.
+      - p: It didn't break when everyone else was using it normally.
+        sass:
+          convo:
+            - j: Did I look like I needed any input from you, <<ptlname>>?
+            - d: No Your Honor, I apologize.
+    responsible:
+      - j: Tell me why you don't think you should be responsible, <<dtlname>>.
+      - d: Because it was an accident, Your Honor. I didn't do anything to her grate. I was gentle and didn't mean for it to break.
+      - p: Hey, "you break it, you buy it", <<dfname>>. Same thing. If you break it, you pay for it.
+        sass:
+          convo:
+            - j: If I want you to speak, <<ptlname>>, I will ask you a question. Until then, I want you to be quiet.
 contradictions:
-  pie:
-    - j: Uh, are you a pie liar? A piar?!
-    - p: That pun is dumb, Your Honor
-    - j: You're literally dead to me.
+  unused:
+    - j: You say you have used <<ptlname>>'s manure grate on several occassions, <<dtlname>>?
+    - d: Yes, that's right.
+    - p: That's true, Your Honor.
+    - j: But this time it took 20 minutes to figure out?
+    - d: "..."
+    - j: Had you suffered from any brain trauma since the last time you used her grate, <<dtlname>>?
+    - d: No, Your Honor.
+    - d: The truth is I did see the grate break, and I was trying to clean it up so no one would notice. I know that was wrong, but I was so embarassed about it, Your Honor.
+    - d: But I didn't break it on purpose, I promise!
+    - j: I want you to submit an addendum to your Response, <<dtlname>>. And I want the truth this time.
+      unlock:
+        addendum: response1

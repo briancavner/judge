@@ -1,8 +1,44 @@
 const speech = {
     queue: [],
 
+    tools: {
+        process: function(input) {
+            let array = [];
+
+            if (Array.isArray(input[0])) {
+                array = input[0];
+            } else {
+                for (let i = 0; i < input.length; i++) {
+                    array.push(input[i])
+                }
+            };
+
+            return array;
+        }
+    },
+
+    add: function() {
+        const array = speech.tools.process(arguments);
+
+        for (let i = 0; i < array.length; i++) {
+            speech.queue.push(array[i]);
+        }
+    },
+
+    addToFront: function() {
+        const array = speech.tools.process(arguments);
+
+        speech.queue = array.concat(speech.queue);
+    },
+
+    empty: function() {
+        speech.queue.splice(0, speech.queue.length);
+    },
+
     speak: function() {
-        if (speech.queue.length === 0) {
+        if (arguments.length > 0) {
+            speech.add(speech.tools.process(arguments));
+        } else if (speech.queue.length === 0) {
             ui.speech.close(true);
             return;
         }
@@ -24,8 +60,15 @@ const speech = {
         ui.speech.speak(speaker, message);
         transcript.add(speaker, message, nextLine.contradiction);
 
+        if (nextLine.unlock) {
+            if (nextLine.unlock.addendum) {
+                const type = nextLine.unlock.addendum.replace(/[0-9]/g, '')
+                desk.items[type].addendum(data.current.addendums[nextLine.unlock.addendum]);
+            }
+        }
+
         setTimeout(function() {
-            ui.speech.respond(speaker, message, nextLine.noButtons, nextLine.inadmissible, nextLine.sass)
+            ui.speech.respond(speaker, message, nextLine.noButtons, nextLine.inadmissible, nextLine.admissible, nextLine.sass)
         }, 600)
     },
 };
@@ -55,16 +98,16 @@ const transcript = {
             console.log("different speaker!")
         } else if (transcript.contradiction.message === message) {
             console.log("same message!");
-        } else if (!transcript.contradiction.contradiction || !contradiction) {
+        } else if (!transcript.contradiction.contradiction || !contradiction || 
+                transcript.contradiction.contradiction !== contradiction) {
             ui.contradiction(speaker, transcript.contradiction.message, message);
             console.log("not contradictory")
-        } else if (transcript.contradiction.contradiction !== contradiction) {
-            ui.contradiction(speaker, transcript.contradiction.message, message);
-            console.log("not contradictory 2")
+        } else if (score.contradiction.found(contradiction)) {
+            console.log("found already")
         } else {
             ui.divs.blocker.onclick(); // This is two times I've done this, it feels not good
-            speech.queue = data.noButtons(data.current.contradictions[contradiction]);
-            speech.speak();
+            speech.speak(data.noButtons(data.current.contradictions[contradiction]));
+            score.contradiction.add(contradiction)
         }
 
         transcript.contradiction = null;

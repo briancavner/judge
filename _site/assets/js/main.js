@@ -1,4 +1,81 @@
 
+    const tester = function(caseNum) {
+    const testCase = tools.deepCopy(data.cases[`${caseNum}`]);
+    
+    const testDict = function() {
+        console.log("Dictionary test");
+        for (let i = 0; i < testCase.dictionary.length; i++) {
+            if (!data.dictionary[testCase.dictionary[i]]) {
+                console.warn(`${testCase.dictionary[i]} is not in dictionary`)
+            }
+        }
+    };
+
+    const getAllTags = function(array) {
+        const tags = [];
+        const looper = function(string) {
+            const index = string.indexOf("[[")
+
+            if (index === -1) {
+                return;
+            }
+
+            const endIndex = string.indexOf("]]");
+            let tag = string.substr(index + 2, endIndex - index - 2);
+            if (tag.indexOf("|") !== -1) {
+                tag = tag.substr(tag.indexOf("|") + 1)
+            }
+
+            tags.push(tag);
+            looper(string.substr(endIndex + 2));
+        }
+
+        for (let i = 0; i < array.length; i++) {
+            looper(array[i]);
+        }
+
+        return tags;
+    };
+
+    checkTags = function(pUsedTags, dUsedTags, pAvailableTags, dAvailableTags) {
+        console.log("Statement tag test");
+        for (let i = 0; i < pUsedTags.length; i++) {
+            if (pAvailableTags.indexOf(pUsedTags[i]) === -1) {
+                console.warn(`Tag ${pUsedTags[i]} from complaint does not have a conversation`)
+            }
+        }
+        for (let i = 0; i < pAvailableTags.length; i++) {
+            if (pUsedTags.indexOf(pAvailableTags[i]) === -1) {
+                console.warn(`Tag ${pAvailableTags[i]} has a conversation but is missing from complaint`)
+            }
+        }
+        for (let i = 0; i < dUsedTags.length; i++) {
+            if (dAvailableTags.indexOf(dUsedTags[i]) === -1) {
+                console.warn(`Tag ${dUsedTags[i]} from response does not have a conversation`)
+            }
+        }
+        for (let i = 0; i < dAvailableTags.length; i++) {
+            if (dUsedTags.indexOf(dAvailableTags[i]) === -1) {
+                console.warn(`Tag ${dAvailableTags[i]} has a conversation but is missing from response`)
+            }
+        }
+    };
+
+    addAddendums = function(source) {
+        const addendums = Object.keys(testCase.addendums);
+        let array = testCase[source];
+        for (let i = 0; i < addendums.length; i++) {
+            if (addendums[i].indexOf(source) !== -1) {
+                array = array.concat(testCase.addendums[addendums[i]])
+            }
+        }
+        return array;
+    }
+
+    testDict();
+    checkTags(getAllTags(addAddendums("complaint")), getAllTags(addAddendums("response")), Object.keys(testCase.questioning.plaintiff), Object.keys(testCase.questioning.defendant));
+};
+
     const tools = {
     rand: function(a, b) {
         return Math.floor(Math.random() * (b - a + 1) + a);
@@ -21,46 +98,22 @@
         }
     },
 
-    testQuestioning: function(caseNum) {
-        const testCase = data.cases[`${caseNum}`];
-        const pKeywords = Object.keys(testCase.questioning.plaintiff);
-        const cKeywords = [];
-        const complaint = testCase.complaint.join(" ")
-        const stack = [];
-        for (let i = 0; i < complaint.length; i++) {
-            if (complaint[i] === "[" && complaint[i - 1] === "[")
-            {
-                stack.push(i);
-            } else if (complaint[i] === "]" && complaint[i + 1] === "]") {
-                let pos = stack[stack.length - 1];
-                let len = i - 1 - pos;
-                let ans;
- 
-                ans = complaint.substring(pos + 1, len + pos + 1);
-
-                cKeywords.push(ans);
+    getAllKeys: function(obj) {
+        let keys = [];
+        for (let key in obj) {
+            keys.push(key);
+            if (typeof obj[key] === "object") {
+                const subkeys = tools.getAllKeys(obj[key]);
+                keys = keys.concat(subkeys.map(function(subkey) {
+                    return key + "." + subkey;
+                }));
             }
         }
-
-        console.log(pKeywords.sort())
-        console.log(cKeywords)
+        return keys;
     },
 
-    // This needs to get added elsewhere, but I just copied it here
-
-    processTags: function(string, source) {
-        const tagCount = string.split("[").length - 1;
-        for (let i = 0; i < tagCount; i++) {
-            const tag = string.substring(
-                string.lastIndexOf("[") + 1, 
-                string.lastIndexOf("]")
-            );
-            const array = tag.split("|");
-            array.push(array[0]); // Making the tag equal the tag name if no tag name is defined
-            string = string.replace(`[${tag}]`, `<span onclick="chat.newInterrogation('${array[1]}', '${source}')">${array[0]}</span>`);
-
-        }
-        return string;
+    deepCopy: function(obj) {
+        return JSON.parse(JSON.stringify(obj));
     },
 };
 
@@ -125,8 +178,7 @@
             ui.divs.speech.appendChild(bubble);
         },
 
-        respond: function(speaker, message, noButtons, inadmissible, sass) {
-            // This can probably be improved. Get rid of directly editing speech.queue
+        respond: function(speaker, message, noButtons, inadmissible, admissible, sass) {
             const cont = document.createElement("button");
             cont.innerHTML = "Continue";
             cont.classList.add("continue");
@@ -148,24 +200,26 @@
                 sassy.classList.add("sass");
                 inad.onclick = function() {
                     ui.divs.respond.innerHTML = "";
-                    speech.queue.splice(0, speech.queue.length);
+                    speech.empty();
                     if (inadmissible) {
-                        speech.queue = data.noButtons(inadmissible.convo);
+                        speech.speak(data.noButtons(inadmissible.convo));
                         score.add(inadmissible, message);
                     } else {
-                        speech.queue.push(data.randomLine("j", "admonish"));
-                        speech.queue.push(data.randomLine(speaker, "admonished"));
-                        score.miscall("inadmissible", message);
+                        speech.speak(data.randomLine("j", "admonish"), data.randomLine(speaker, "admonished"));
+                        if (admissible) {
+                            score.miscall("inadmissible", message, admissible.note)
+                        } else {
+                            score.miscall("inadmissible", message);
+                        }
                     }
-                    speech.speak();
                 }
                 sassy.onclick = function() {
                     ui.divs.respond.innerHTML = "";
                     if (sass) {
-                        speech.queue = data.noButtons(sass.convo).concat(speech.queue);
+                        speech.addToFront(data.noButtons(sass.convo));
                         score.add(sass, message);
                     } else {
-                        speech.queue = [data.randomLine("j", "admonish"), data.randomLine(speaker, "admonished")].concat(speech.queue)
+                        speech.addToFront(data.randomLine("j", "admonish"), data.randomLine(speaker, "admonished"))
                         score.miscall("sass", message);
                     }
                     speech.speak();
@@ -365,6 +419,7 @@
 
     const score = {
     log: [],
+    contradictions: [],
 
     add: function(input, line) {
         const entry = Object.assign({}, input); // Clone without altering original
@@ -379,16 +434,66 @@
         score.log.push(entry);
     },
 
-    miscall: function(reason, line) {
-        score.log.push({type: reason, weight: -1, line: line})
-    }
+    miscall: function(reason, line, note = "") {
+        score.log.push({type: reason, line: line, note:note})
+    },
+
+    contradiction: {
+        add: function(tag) {
+            score.contradictions.push(tag)
+        },
+
+        found: function(tag) {
+            if (score.contradictions.indexOf(tag) === -1) {
+                return false;
+            }
+
+            return true;
+        },
+    },
 };
 
     const speech = {
     queue: [],
 
+    tools: {
+        process: function(input) {
+            let array = [];
+
+            if (Array.isArray(input[0])) {
+                array = input[0];
+            } else {
+                for (let i = 0; i < input.length; i++) {
+                    array.push(input[i])
+                }
+            };
+
+            return array;
+        }
+    },
+
+    add: function() {
+        const array = speech.tools.process(arguments);
+
+        for (let i = 0; i < array.length; i++) {
+            speech.queue.push(array[i]);
+        }
+    },
+
+    addToFront: function() {
+        const array = speech.tools.process(arguments);
+
+        speech.queue = array.concat(speech.queue);
+    },
+
+    empty: function() {
+        speech.queue.splice(0, speech.queue.length);
+    },
+
     speak: function() {
-        if (speech.queue.length === 0) {
+        if (arguments.length > 0) {
+            speech.add(speech.tools.process(arguments));
+        } else if (speech.queue.length === 0) {
             ui.speech.close(true);
             return;
         }
@@ -410,8 +515,15 @@
         ui.speech.speak(speaker, message);
         transcript.add(speaker, message, nextLine.contradiction);
 
+        if (nextLine.unlock) {
+            if (nextLine.unlock.addendum) {
+                const type = nextLine.unlock.addendum.replace(/[0-9]/g, '')
+                desk.items[type].addendum(data.current.addendums[nextLine.unlock.addendum]);
+            }
+        }
+
         setTimeout(function() {
-            ui.speech.respond(speaker, message, nextLine.noButtons, nextLine.inadmissible, nextLine.sass)
+            ui.speech.respond(speaker, message, nextLine.noButtons, nextLine.inadmissible, nextLine.admissible, nextLine.sass)
         }, 600)
     },
 };
@@ -441,16 +553,16 @@ const transcript = {
             console.log("different speaker!")
         } else if (transcript.contradiction.message === message) {
             console.log("same message!");
-        } else if (!transcript.contradiction.contradiction || !contradiction) {
+        } else if (!transcript.contradiction.contradiction || !contradiction || 
+                transcript.contradiction.contradiction !== contradiction) {
             ui.contradiction(speaker, transcript.contradiction.message, message);
             console.log("not contradictory")
-        } else if (transcript.contradiction.contradiction !== contradiction) {
-            ui.contradiction(speaker, transcript.contradiction.message, message);
-            console.log("not contradictory 2")
+        } else if (score.contradiction.found(contradiction)) {
+            console.log("found already")
         } else {
             ui.divs.blocker.onclick(); // This is two times I've done this, it feels not good
-            speech.queue = data.noButtons(data.current.contradictions[contradiction]);
-            speech.speak();
+            speech.speak(data.noButtons(data.current.contradictions[contradiction]));
+            score.contradiction.add(contradiction)
         }
 
         transcript.contradiction = null;
@@ -486,7 +598,8 @@ const transcript = {
             complaint: "plaintiff",
             response: "defendant",
         };
-        const makeContent = function() {
+
+        const tagize = function(string) {
             const Keyword = function(keyword, displayText) {
                 const self = this;
 
@@ -494,15 +607,49 @@ const transcript = {
                 self.div.classList.add("tag")
                 self.div.innerHTML = displayText;
                 self.div.onclick = function() {
-                    // This can be better, it's all kind of hacky. Don't edit speech.queue directly
-                    ui.divs.blocker.onclick(); // Triggers closing the open Item
-                    speech.queue = data.current.questioning[writer[type]][keyword].slice();
-                    speech.speak();
+                    ui.divs.blocker.onclick(); // Is there a better way to triggers closing the open Item?
+                    speech.speak(data.current.questioning[writer[type]][keyword].slice());
+                    self.div.classList.remove("tag");
+                    self.div.classList.add("strikeTag");
+                    self.div.onclick = null;
                 }
 
                 return self.div;
             };
+            const p = document.createElement("p");
 
+            while (string.length > 0) {
+                const span = document.createElement("span");
+                const startIndex = string.indexOf("[[");
+                let substring;
+                let button;
+
+                if (startIndex > 0) {
+                    const endIndex = string.indexOf("]]");
+                    const tag = string.substring(startIndex + 2, endIndex)
+                    const splitTag = tag.split("|")
+                    
+                    substring = string.substring(0, startIndex)
+                    
+                    button = new Keyword(splitTag[1] || splitTag[0], splitTag[0]);
+
+                    string = string.replace(`[[${tag}]]`, "");
+                } else {
+                    substring = string;
+                }
+
+                string = string.replace(substring, "");
+
+                span.innerHTML = substring;
+                p.appendChild(span);
+                if (button) {
+                    p.appendChild(button);
+                }
+            }
+            return p;
+        };
+        
+        const makeContent = function() {
             const dictName = function(tag) {
                 tag = tag.replace(/_/g, " ");
                 return tools.capitalize(tag);
@@ -515,36 +662,7 @@ const transcript = {
                 case "response":
                     const array = data.current[type];
                     for (let i = 0; i < array.length; i++) {
-                        const p = document.createElement("p");
-
-                        while (array[i].length > 0) {
-                            const span = document.createElement("span");
-                            const startIndex = array[i].indexOf("[[");
-                            let substring;
-                            let button;
-
-                            if (startIndex > 0) {
-                                const endIndex = array[i].indexOf("]]");
-                                const tag = array[i].substring(startIndex + 2, endIndex)
-                                const splitTag = tag.split("|")
-                                
-                                substring = array[i].substring(0, startIndex)
-                                
-                                button = new Keyword(splitTag[1] || splitTag[0], splitTag[0]);
-
-                                array[i] = array[i].replace(`[[${tag}]]`, "");
-                            } else {
-                                substring = array[i];
-                            }
-
-                            array[i] = array[i].replace(substring, "");
-
-                            span.innerHTML = substring;
-                            p.appendChild(span);
-                            if (button) {
-                                p.appendChild(button);
-                            }
-                        }
+                        const p = tagize(array[i]);
                         div.appendChild(p);
                     }
                     break;
@@ -582,7 +700,19 @@ const transcript = {
         self.close = function() {
             ui.showIcon(self.icon.div);
             ui.hideItem(self.div);
-        }
+        };
+
+        self.addendum = function(array) {
+            const h2 = document.createElement("h2");
+            h2.innerHTML = "Addendum";
+
+            self.content.appendChild(h2);
+
+            for (let i = 0; i < array.length; i++) {
+                const p = tagize(array[i])
+                self.content.appendChild(p);
+            }
+        };
 
         self.type = type;
         self.icon = new desk.Icon(self, type);
@@ -612,7 +742,7 @@ const transcript = {
     const data = {
     cases: {
         
-            1: ["1",{"title":"A Petition Pursuant to a Pulverized Pig Pen","summary":["Plaintiff Sally Swineman says that defendant Hailey Heiferson broke her manure grate during an important social gathering at her pen, leading to embarassment and financial loss. She is suing for $260, the cost to replace her grate.","Ms. Heiferson says that many people had used the manure grate that night, and that she was not the one to break it."],"plaintiff":{"name":"Paula Piglet","appearance":{"head":3,"body":6}},"defendant":{"name":"Carla Cowson","appearance":{"head":6,"body":2}},"dictionary":["cause_of_action","standard_of_evidence","relevance","hearsay","statement_by_party_opponent"],"complaint":["I am a long-time [[resident]] of [[Flourishing]] Fields, and a respected member of the community. The defendant, Ms. Heiferson, is my neighbor and former friend.","On the evening of October 11, I invited Ms. Heiferson and several other community members to a [[social gathering|gathering]] at my pen. The farm was going to elect a new livestock representative, and I wanted to run, so I was having a little campaign party to get the support of my friends.","About two hours into the event, we had just had dinner, and Ms. Heiferson went to the [[manure grate|grate]]. She was in there for [[twenty minutes|time]], and I heard a loud crack while she was using it. When she came out I asked if everything was alright, and she said yes but she looked guilty. I [[discovered later|later]] when another guest tried to use the grate that it had been broken.","I confronted Ms. Heiferson about it and she denied breaking my grate. I told her I didn't believe her, and she starting making a scene. When I asked her to leave, she said some very nasty things to me and stormed out.","The evening at that point was pretty much ruined and everyone left shortly after her. I was so embarassed.","I got an estimate to fix my manure grate the next day. It cost $260, and I believe Ms. Heiferson is responsible because she is the one who broke the grate."],"response":["I recently moved next door to the plaintiff, Ms. Swineman, at the Flourishing Fields Farm. She was immediately a headache, constantly complaining about noise, or that we would leave things leaning against the fence. She has a bit of a reputation.","So then on October 11, I'm in my yard enjoying a milkshake when Ms. Swineman comes up and says the nastiest things to me. Not unusual, but not something I feel like hearing that day, so I go back inside.","The next time I saw her was that night when she came over and said I had broken her feeding trough, as if I would ever want to touch that disgusting thing. So I told her that I wouldn't do something like that, and she just told me that she'd see me in court, and now here we are.","I have no interest in breaking any of Ms. Swineman's things. I'd prefer she just leave me alone."],"questioning":{"plaintiff":{"resident":[{"j":"Do you like pie?"},{"p":"I hate pie, honestly","contradiction":"pie"},{"j":"That's weird."}],"Flourishing":[{"j":"What's your favorite dessert?"},{"p":"I friggin' love pie!","contradiction":"pie"}],"gathering":[{"j":"Was this the first time you hosted a social gathering?"},{"p":"No, I have had them all over before, multiple times &mdash; Ms. Heiferson included."},{"p":"There had never been an issue before. We had always gotten along fine."}],"grate":[{"j":"Tell me about your manure grate."},{"p":"It's a typical manure grate, same as the ones in all the other pens in the farm."},{"p":"I never had an issue with it before. Ms. Heiferson has even used it."},{"p":"But I guess that was before she put on some weight.","sass":{"convo":[{"j":"Okay, well let me tell you something, madam, you are no petite piglet yourself."}]}}],"time":[{"j":"Did you keep a stopwatch running while she was using your manure grate, Ms. Swineman?"},{"p":"No, nothing like that, Your Honor."},{"p":"But I heard the crack right after she went in there, so I was waiting for her to come out, and I happened to notice how long she took."}],"later":[{"j":"If you thought Ms. Heiferson had broken your manure grate, why didn't you check it right away?"},{"p":"I wanted to, but I was busy hosting the party, Your Honor. Cooking and entertaining at the same time."},{"p":"I planned to check as soon as I could pull myself away, but another guest went to the grate about 10 minutes later and then came right out and got me."},{"p":"She said that my manure grate was broken, and that she thought it looked like someone had smashed it.","inadmissible":{"type":"hearsay","weight":3,"convo":[{"j":"Don't tell me what she thought or what she said unless she's here to speak for herself."},{"j":"Tell me what you did, and what you saw."},{"p":"I went to look at the manure grate and saw that it was broken. No one else had used it after Ms. Heiferson."}]}},{"p":"So I went in and checked, and sure enough, it was broken. No one had used it after Ms. Heiferson."}]}},"contradictions":{"pie":[{"j":"Uh, are you a pie liar? A piar?!"},{"p":"That pun is dumb, Your Honor"},{"j":"You're literally dead to me."}]}}][1],
+            1: ["1",{"title":"A Petition Pursuant to a Pulverized Pig Pen","summary":["Plaintiff <<pname>> says that defendant <<dname>> broke her manure grate during an important social gathering at her pen, leading to embarassment and financial loss. She is suing for $260, the cost to replace her grate.","<<dtlname>> says that many people had used the manure grate that night, and that she was not the one to break it."],"plaintiff":{"name":"Sally Swineman","title":"Ms.","appearance":{"head":3,"body":6}},"defendant":{"name":"Carla Heiferson","title":"Ms.","appearance":{"head":6,"body":2}},"dictionary":["cause_of_action","standard_of_evidence","relevance","hearsay","statement_by_party_opponent"],"complaint":["I am a long-time resident of Flourishing Fields, and a respected member of the community. The defendant, <<dtlname>>, is my neighbor and former friend.","On the evening of October 11, I invited <<dtlname>> and several other community members to a [[social gathering|gathering]] at my pen. The farm was going to elect a new livestock representative, and I wanted to run, so I was having a little campaign party to get the support of my friends.","About two hours into the event, we had just had dinner, and <<dtlname>> went to the [[manure grate|grate]]. She was in there for [[twenty minutes|time]], and I heard a loud crack while she was using it. When she came out I asked if everything was alright, and she said yes but she looked guilty. I [[discovered later|later]] when another guest tried to use the grate that it had been broken.","I confronted <<dtlname>> about it and she denied breaking my grate. I told her I didn't believe her, and she starting making a scene. When I asked her to leave, she said some very nasty things to me and stormed out.","The evening at that point was pretty much ruined and everyone left shortly after her. I was so embarassed.","I got an estimate to fix my manure grate the next day. It cost $260, and I believe <<dtlname>> is responsible because she is the one who broke the grate."],"response":["My neighbor, <<ptlname>>, invited me and some other neighbors over for dinner and to chit-chat. I had been over [[several times|several]] and considered her a good friend.","<<ptlname>> started talking about some kind of election she was running in, and I left to use the grate. There wasn't any problem with it when I got in there.","After about [[twenty minutes|minutes]] I came back, and very shortly afterward, <<ptlname>> started interrogating me. I didn't know what it was about at first, but then she said I had broken her grate and wanted me to pay for it."],"addendums":{"response1":["I was too embarassed to admit it, which is why I initially lied and pretended that I didn't know what happened to the manure grate.","When I was [[using it|using]], I [[heard a sort of pop|pop]], and then when I checked the grate, I saw that it had broken. I tried to clean up the mess as best as I could while I was trying to think of what to say to <<ptlname>>.","I decided I wanted to tell her the truth privately, but when I saw how upset she was, and that she expected me to pay for it, I was too nervous to say anything at all. It was an accident, and [[I didn't think I should be responsible|responsible]] for fixing her grate.","I hoped she would eventually get less angry so I could admit things to her then, but then I found out she was suing me and never got the chance."]},"questioning":{"plaintiff":{"gathering":[{"j":"Was this the first time you hosted a social gathering?"},{"p":"No, I have had them all over before, multiple times &mdash; <<dtlname>> included."},{"p":"There had never been an issue before. We had always gotten along fine."}],"grate":[{"j":"Tell me about your manure grate."},{"p":"It's a typical manure grate, same as the ones in all the other pens in the farm."},{"p":"I never had an issue with it before. <<dtlname>> has even used it."},{"p":"But I guess that was before she put on some weight.","sass":{"convo":[{"j":"Let me tell you something, madam, you are no petite piglet yourself, so I don't want to hear your comments about her weight."},{"d":"Thank you, Your Honor."}]},"admissible":{"note":"Even though the plaintiff said this as a rude personal attack, the fact that the defendant gained weight might be relevant in determining how and why the grate broke. Ironically, the plaintiff's insult ends up being evidence against her case; if the grate broke as a result of the defendant's weight, it suggests that she did not intentionally or negligently break it."}}],"time":[{"j":"Did you keep a stopwatch running while she was using your manure grate, <<ptlname>>?"},{"p":"No, nothing like that, Your Honor."},{"p":"But I heard the crack right after she went in there, so I was waiting for her to come out, and I happened to notice how long she took."}],"later":[{"j":"If you thought <<dtlname>> had broken your manure grate, why didn't you check it right away?"},{"p":"I wanted to, but I was busy hosting the party, Your Honor. Cooking and entertaining at the same time."},{"p":"I planned to check as soon as I could pull myself away, but another guest went to the grate about 10 minutes later and then came right out and got me."},{"p":"She said that my manure grate was broken, and that she thought it looked like someone had smashed it.","inadmissible":{"type":"hearsay","convo":[{"j":"Don't tell me what she thought or what she said unless she's here to speak for herself."},{"j":"Tell me what you did, and what you saw."},{"p":"I went to look at the manure grate and saw that it was broken. No one else had used it after <<dtlname>>."}],"note":"Hearsay is problematic because it is unreliable. There is no way to examine the truth of the claim \"it looked like someone had smashed it\" unless the person who said that is in court."}},{"p":"So I went in and checked, and sure enough, it was broken. No one had used it after <<dtlname>>."}]},"defendant":{"several":[{"j":"When you had gone to <<ptlname>>'s residence in the past, had you used her manure grate?"},{"d":"Yes, Your Honor. Several times. I never had an issue with it before.","contradiction":"unused"},{"d":"I'm not sure why <<ptlname>> would think I would break her grate. I had no reason at all to do that."}],"minutes":[{"j":"Is 20 minutes at the manure grate a typical amount of time for you?"},{"d":"Oh, no Your Honor, but it wasn't like I was using that time to break the grate, or anything."},{"d":"It was just hard for me to figure out how to use the grate. It took me several minutes to figure out.","contradiction":"unused","sass":{"convo":[{"j":"You don't strike me as that dumb of a woman, <<dtlname>>."},{"d":"Thank you, Your Honor."},{"d":"...I think?"}]}}],"pop":[{"j":"Describe the pop you heard and what you were doing at the time, <<dtlname>>."},{"d":"It was just a \"pop\". It sounded like something came loose or maybe cracked below me."},{"d":"I wasn't doing anything out of the ordinary, Your Honor. Just standing there."},{"d":"I hadn't started, you know, \"going\" yet. It was only a few seconds after I put my weight on the grate."}],"using":[{"j":"Were you doing anything unusual with or on the manure grate?"},{"d":"No, Your Honor, just using it normally."},{"p":"It didn't break when everyone else was using it normally.","sass":{"convo":[{"j":"Did I look like I needed any input from you, <<ptlname>>?"},{"d":"No Your Honor, I apologize."}]}}],"responsible":[{"j":"Tell me why you don't think you should be responsible, <<dtlname>>."},{"d":"Because it was an accident, Your Honor. I didn't do anything to her grate. I was gentle and didn't mean for it to break."},{"p":"Hey, \"you break it, you buy it\", <<dfname>>. Same thing. If you break it, you pay for it.","sass":{"convo":[{"j":"If I want you to speak, <<ptlname>>, I will ask you a question. Until then, I want you to be quiet."}]}}]}},"contradictions":{"unused":[{"j":"You say you have used <<ptlname>>'s manure grate on several occassions, <<dtlname>>?"},{"d":"Yes, that's right."},{"p":"That's true, Your Honor."},{"j":"But this time it took 20 minutes to figure out?"},{"d":"..."},{"j":"Had you suffered from any brain trauma since the last time you used her grate, <<dtlname>>?"},{"d":"No, Your Honor."},{"d":"The truth is I did see the grate break, and I was trying to clean it up so no one would notice. I know that was wrong, but I was so embarassed about it, Your Honor."},{"d":"But I didn't break it on purpose, I promise!"},{"j":"I want you to submit an addendum to your Response, <<dtlname>>. And I want the truth this time.","unlock":{"addendum":"response1"}}]}}][1],
         
             2: ["old_1",{"title":"A Petition Pursuant to a Pulverized Pig Pen","summary":["Plaintiff Sally Swineman says that defendant Hailey Heiferson damaged her feeding trough, and is suing for $160, the cost to replace it.","Ms. Heiferson says that she has no proof for her accusations, and that it could have been anyone in the barnyard due to Ms. Swineman's borish attitude."],"plaintiff":{"name":"Paula Piglet","appearance":{"head":3,"body":6}},"defendant":{"name":"Carla Cowson","appearance":{"head":6,"body":2}},"dictionary":["cause_of_action","standard_of_evidence","relevance","hearsay","statement_by_party_opponent"],"complaint":["I am a [[long-time resident|resident]] of [[Flourishing Fields|flourishing]], and a [[respected member|respected]] of the community. The defendant, Ms. Heiferson, is my [[neighbor]], and she is someone with whom I have [[never been able to get along|get_along]] despite my [[best efforts|best_efforts]].","On the night of October 11, I was taking my piglets for an evening walk. We came home, and I put my piglets to bed. I felt a craving for a snack before bed, as is common for anyone, and went out to the trough. I found it smashed in multiple places, clearly intentionally.","I [[knew right away|knew]] that Ms. Heiferson had done it. She's jealous of me, and told me that she would do something like this. When I confronted her, she lied about it.","In her rampage, she not only destroyed the trough itself, but also the housing it sits in. I'm suing for a replacement trough and to have the housing repaired, which costs $160 in total."],"response":["I recently moved next door to the plaintiff, Ms. Swineman, at the Flourishing Fields Farm. She was immediately a headache, constantly complaining about noise, or that we would leave things leaning against the fence. She has a bit of a reputation.","So then on October 11, I'm in my yard enjoying a milkshake when Ms. Swineman comes up and says the nastiest things to me. Not unusual, but not something I feel like hearing that day, so I go back inside.","The next time I saw her was that night when she came over and said I had broken her feeding trough, as if I would ever want to touch that disgusting thing. So I told her that I wouldn't do something like that, and she just told me that she'd see me in court, and now here we are.","I have no interest in breaking any of Ms. Swineman's things. I'd prefer she just leave me alone."],"questioning":{"plaintiff":{"resident":[{"j":"2, 4, 6, 8, who do we appreciate?"},{"p":"Pigs"},{"d":"No we don't","noButtons":true},{"p":"Oh, sorry"}],"flourishing":["poo"],"respected":["poo"],"neighbor":["poo"],"get_along":["poo"],"best_efforts":["poo"],"knew":[{"j":"What makes you so confident that Ms. Heiferson was responsible for damaging your trough?"},{"p":"I know she did it, Your Honor. I don't have any doubt.","inadmissible":{"type":"relevance","weight":3,"convo":[{"j":"You can't tell me that, you psycho moron, I wish you were dead!"},{"p":"That's way harsh."}],"catch":"Correct, that was irrelevant","miss":"You missed an irrelevant thing"}},{"j":"Don't tell me what you \"know\". Tell me what you saw or what you heard that makes you believe Ms. Heiferson was responsible."},{"p":"She told me she did it."},{"d":"This isn't true, Your Honor!"}]}}}][1],
         
@@ -628,8 +758,55 @@ const transcript = {
         d: "Defendant",
     },
 
+    processVars: function(obj) {
+        const vars = {
+            pname: obj.plaintiff.name,
+            ptitle: obj.plaintiff.title,
+            dname: obj.defendant.name,
+            dtitle: obj.defendant.title,
+        };
+
+        vars.pfname = vars.pname.split(" ")[0];
+        vars.plname = vars.pname.split(" ")[1];
+        vars.ptlname = `${vars.ptitle} ${vars.plname}`;
+        vars.dfname = vars.dname.split(" ")[0];
+        vars.dlname = vars.dname.split(" ")[1];
+        vars.dtlname = `${vars.dtitle} ${vars.dlname}`;
+
+        const varReplace = function(string) {
+            if (typeof string !== "string") {
+                return string;
+            }
+            const index = string.indexOf("<<")
+            
+            if (index === -1) {
+                return string;
+            }
+
+            const variable = string.substr(index + 2, string.indexOf(">>") - index - 2);
+
+            return varReplace(string.replace(`<<${variable}>>`, vars[variable]))
+        };
+
+        const looper = function(subobj) {
+            for (let key in subobj) {
+                if (typeof subobj[key] === "object") {
+                    subobj[key] = looper(subobj[key]);
+                } else {
+                    subobj[key] = varReplace(subobj[key]);
+                }
+            }
+            return subobj;
+        }
+
+        looper(obj);
+        return obj;
+    },
+
     loadCase: function(caseNum) {
-        data.current = data.cases[`${caseNum}`];
+        const selectedCase = tools.deepCopy(data.cases[`${caseNum}`]);
+        data.current = data.processVars(selectedCase);
+
         desk.make();
         ui.makeLitigants();
     },

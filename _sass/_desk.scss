@@ -5,82 +5,90 @@
     background-size: contain;
     width: 100%;
     height: 35%;
+
+    & .icon {
+        position: absolute;
+        background-repeat: no-repeat;
+        top: 61%;
+        width: 7%;
+        height: (7*16%/(0.35*9));
+        transition: all 1.3s;
+        background-size: contain;
+    }
+
+    & .complaint {
+        left: 20%;
+        background-image: url("/assets/img/complaint.png");
+    }
+
+    & .response {
+        left: 73%;
+        background-image: url("/assets/img/response.png");
+    }
+
+    & .transcript {
+        left: 3%;
+        background-image: url("/assets/img/transcript.png");
+    }
+
+    & .dictionary {
+        left: 90%;
+        background-image: url("/assets/img/dictionary.png");
+    }
 }
 
-#desk .icon {
-    position: absolute;
-    background-repeat: no-repeat;
-    top: 61%;
-    width: 7%;
-    height: (7*16%/(0.35*9));
-    transition: all 1.3s;
-    background-size: contain;
+#items {
+    & .item {
+        background-size: contain;
+        background-repeat: no-repeat;
+        position: absolute;
+        transition: all 1.5s;
+        top: 5%;
+        left: 10%;
+        margin-top: 150%;
+        width: 80%;
+        height: 90%;
+    }
+    
+    & .content {
+        position: absolute;
+        color: $black;
+        overflow: auto;
+        background-color: $white;
+        
+        & p {
+            margin: 1em;
+        }
+
+        & .tag {
+            cursor: pointer;
+            padding: 0.2% 0.6%;
+            background: linear-gradient(104deg, 
+                    rgba(255, 177, 122,0) 0.9%, 
+                    rgba(255, 177, 122,1.25) 2.4%, 
+                    rgba(255, 177, 122,0.5) 5.8%, 
+                    rgba(255, 177, 122,0.1) 93%, 
+                    rgba(255, 177, 122,0.7) 96%, 
+                    rgba(255, 177, 122,0) 98%), 
+                linear-gradient(183deg, 
+                    rgba(255, 177, 122,0) 0%, 
+                    rgba(255, 177, 122,0.3) 7.9%, 
+                    rgba(255, 177, 122,0) 15%);
+            -webkit-box-decoration-break: clone;
+            margin: -0.2% -0.6%;
+            border-radius: 13%;
+            text-shadow: -12px 12px 9.8px rgba(255, 177, 122,0.7), 
+                21px -18.1px 7.3px rgba(255, 255, 255,1), 
+                -18.1px -27.3px 30px rgba(255, 255, 255,1);
+        }
+
+        & .strikeTag {
+            text-decoration: line-through;
+            text-decoration-color: red;
+        }
+    }
 }
 
-#desk .complaint {
-    left: 20%;
-    background-image: url("/assets/img/complaint.png");
-}
-
-#desk .response {
-    left: 73%;
-    background-image: url("/assets/img/response.png");
-}
-
-#desk .transcript {
-    left: 3%;
-    background-image: url("/assets/img/transcript.png");
-}
-
-#desk .dictionary {
-    left: 90%;
-    background-image: url("/assets/img/dictionary.png");
-}
-
-#items .item {
-    background-size: contain;
-    background-repeat: no-repeat;
-    position: absolute;
-    transition: all 1.5s;
-    top: 5%;
-    left: 10%;
-    margin-top: 150%;
-    width: 80%;
-    height: 90%;
-}
-
-#items .content {
-    position: absolute;
-    color: $black;
-    overflow: auto;
-    background-color: $white;
-}
-
-#items .content p {
-    margin: 1em;
-}
-
-#items .content .tag {
-    cursor: pointer;
-    padding: 0.2% 0.6%;
-    background: linear-gradient(104deg, 
-            rgba(255, 177, 122,0) 0.9%, 
-            rgba(255, 177, 122,1.25) 2.4%, 
-            rgba(255, 177, 122,0.5) 5.8%, 
-            rgba(255, 177, 122,0.1) 93%, 
-            rgba(255, 177, 122,0.7) 96%, 
-            rgba(255, 177, 122,0) 98%), 
-        linear-gradient(183deg, 
-            rgba(255, 177, 122,0) 0%, 
-            rgba(255, 177, 122,0.3) 7.9%, 
-            rgba(255, 177, 122,0) 15%);
-    -webkit-box-decoration-break: clone;
-    margin: -0.2% -0.6%;
-    border-radius: 13%;
-    text-shadow: -12px 12px 9.8px rgba(255, 177, 122,0.7), 
-        21px -18.1px 7.3px rgba(255, 255, 255,1), 
-        -18.1px -27.3px 30px rgba(255, 255, 255,1);
-}
 
     #items .content .tag:hover {
         background: linear-gradient(104deg, 
@@ -129,6 +137,20 @@
         left: 17%;
         width: 39%;
         height: 83%;
+        
+        & p {
+            line-height: 1.35em;
+            text-indent: -1.5em;
+            margin-left: 2.5em;
+        }
+
+        & .contradictory {
+            cursor: pointer;
+
+            &:hover {
+                background-color: lightblue;
+            }
+        }
     }
 
     & .content2 {
@@ -139,21 +161,8 @@
         height: 79%;
         overflow: hidden;
         color: $black;
-        // background-color: $white;
     }
 
-    & p {
-        text-indent: -1.5em;
-        margin-left: 2.5em;
-    }
-
-    & .contradictory {
-        cursor: pointer;
-
-        &:hover {
-            background-color: lightblue;
-        }
-    }
 }
 
 #items .dictionary {

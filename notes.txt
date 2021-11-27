@@ -1,3 +1,9 @@
 65.24 dpi for animal faces
 
 Have a case with no damages
+
+Pull the logic of sassing and admissibility and everything out of ui.js
+
+Make data.nobuttons not be a thing that's required anymore; edit the data on init (in ui.js)
+
+If they claim inadmissible, and that's wrong, don't remove the question from the statement
