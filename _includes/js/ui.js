@@ -31,7 +31,7 @@ const ui = {
             cont.classList.add("continue");
             cont.onclick = function() {
                 if (inadmissible) {
-                    score.subtract(inadmissible, message);
+                    verdict.subtract(inadmissible, message);
                 }
                 ui.divs.respond.innerHTML = "";
                 speech.speak();
@@ -50,13 +50,13 @@ const ui = {
                     speech.empty();
                     if (inadmissible) {
                         speech.speak(data.noButtons(inadmissible.convo));
-                        score.add(inadmissible, message);
+                        verdict.add(inadmissible, message);
                     } else {
                         speech.speak(data.randomLine("j", "admonish"), data.randomLine(speaker, "admonished"));
                         if (admissible) {
-                            score.miscall("inadmissible", message, admissible.note)
+                            verdict.miscall("inadmissible", message, admissible.note)
                         } else {
-                            score.miscall("inadmissible", message);
+                            verdict.miscall("inadmissible", message);
                         }
                     }
                 }
@@ -64,10 +64,10 @@ const ui = {
                     ui.divs.respond.innerHTML = "";
                     if (sass) {
                         speech.addToFront(data.noButtons(sass.convo));
-                        score.add(sass, message);
+                        verdict.add(sass, message);
                     } else {
                         speech.addToFront(data.randomLine("j", "admonish"), data.randomLine(speaker, "admonished"))
-                        score.miscall("sass", message);
+                        verdict.miscall("sass", message);
                     }
                     speech.speak();
                 }
@@ -174,16 +174,20 @@ const ui = {
             div.style.transform = `rotate(${tools.rand(-40, 40) / 10}deg)`;
         },
 
-        icon: function(type) {
+        icon: function(type, extra) {
             const div = document.createElement("div");
 
             div.classList.add("icon", type);
             ui.makeDesk.tweak(div);
 
+            if (type === "evidence") {
+                div.classList.add(`slot${extra.slot}`, extra.type)
+            }
+
             return div;
         },
 
-        item: function(type, content) {
+        item: function(type, content, extra) {
             const div = document.createElement("div");
             const contentDiv = document.createElement("div");
 
@@ -193,11 +197,22 @@ const ui = {
             div.classList.add("item", type);
             div.appendChild(contentDiv);
 
-            if (type === "transcript") {
-                ui.divs.contradiction = document.createElement("div");
-                ui.divs.contradiction.classList.add("content2");
-                ui.divs.transcript = contentDiv;
-                div.appendChild(ui.divs.contradiction);
+            switch (type) {
+                case "evidence":
+                    div.classList.add(extra.type);
+                    break;
+                case "transcript":
+                    ui.divs.contradiction = document.createElement("div");
+                    ui.divs.contradiction.classList.add("content2");
+                    ui.divs.transcript = contentDiv;
+                    div.appendChild(ui.divs.contradiction);
+                    break;
+                case "dictionary":
+                    ui.divs.coa = document.createElement("div");
+                    ui.divs.coa.classList.add("content2");
+                    ui.divs.coa.appendChild(extra.content2);
+                    div.appendChild(ui.divs.coa);
+                    break;
             }
 
             return div;
@@ -205,8 +220,14 @@ const ui = {
     },
 
     addToDesk: function(item) {
+        // ui.hideIcon(item.icon.div);
         ui.divs.desk.appendChild(item.icon.div);
         ui.divs.items.appendChild(item.div);
+
+        // setTimeout(function() {
+        //     ui.showIcon(item.icon.div);
+        // }, 100)
+        // This would be to make it initially hidden and then come in
     },
 
     showIcon: function(div) {
@@ -220,7 +241,7 @@ const ui = {
 
     showItem: function(div, closeFunc) {
         div.style.marginTop = 0;
-        ui.divs.blocker.style.opacity = ".7";
+        ui.divs.blocker.style.opacity = null;
         ui.divs.blocker.style.pointerEvents = "auto";
         ui.divs.blocker.onclick = function() {
             closeFunc();
@@ -232,10 +253,70 @@ const ui = {
 
     hideItem: function(div) {
         div.style.marginTop = null;
-        ui.divs.blocker.style.opacity = null;
+        ui.divs.blocker.style.opacity = 0;
         ui.divs.blocker.style.pointerEvents = null;
         ui.divs.blocker.onclick = null;
         ui.divs.backdrop.onclick = null;
+    },
+
+    showMenu: function(type) {
+        const menuDiv = document.createElement("div");
+        const caseDesc = document.createElement("div");
+        const h1 = document.createElement("h1");
+        const h2 = document.createElement("h2");
+        const howTo = document.createElement("button");
+        const start = document.createElement("button");
+        menuDiv.id = "mainMenu";
+        caseDesc.classList.add("caseDesc");
+        h1.innerHTML = "Judge Shrewdy";
+        h2.innerHTML = `It's <span class="i">your</span> courtroom`
+        howTo.innerHTML = "How to Play";
+        start.innerHTML = "Start Case";
+        start.disabled = true;
+
+        howTo.onclick = function() {
+            return;
+        }
+
+        start.onclick = function() {
+            for (let i = 1; i <= Object.keys(data.cases).length; i++) {
+                if (document.getElementById(`caseSelect${i}`).checked) {
+                    data.loadCase(i);
+                    menuDiv.remove();
+                    ui.divs.blocker.style.opacity = 0;
+                    return;
+                }
+            }
+        }
+
+        menuDiv.appendChild(h1);
+        menuDiv.appendChild(h2);
+        menuDiv.appendChild(caseDesc);
+
+        for (let i = 1; i <= Object.keys(data.cases).length; i++) {
+            const input = document.createElement("input");
+            const label = document.createElement("label");
+            const h3 = document.createElement("h3");
+            input.type = "radio";
+            input.id = `caseSelect${i}`
+            input.value = i;
+            input.name = "caseSelect"
+            h3.innerHTML = i;
+            label.htmlFor = `caseSelect${i}`
+            input.onclick = function() {
+                caseDesc.innerHTML = `<span class="b">${data.cases[`case${i}`].title}</span><br>${data.cases[`case${i}`].shortSum}`;
+                start.disabled = false;
+            }
+
+            label.appendChild(h3);
+            menuDiv.appendChild(input);
+            menuDiv.appendChild(label);
+        }
+
+        menuDiv.appendChild(howTo);
+        menuDiv.appendChild(start);
+
+        ui.divs.canvas.appendChild(menuDiv);
     },
 
     init: function() {

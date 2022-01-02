@@ -1,9 +1,5 @@
 const data = {
-    cases: {
-        {% for case in site.data.cases %}
-            {{ forloop.index }}: {{ case | jsonify }}[1],
-        {% endfor %}
-    },
+    cases: {{ site.data.cases | jsonify }},
 
     dictionary: {{ site.data.dictionary | jsonify }},
 
@@ -61,7 +57,7 @@ const data = {
     },
 
     loadCase: function(caseNum) {
-        const selectedCase = tools.deepCopy(data.cases[`${caseNum}`]);
+        const selectedCase = tools.deepCopy(data.cases[`case${caseNum}`]);
         data.current = data.processVars(selectedCase);
 
         desk.make();

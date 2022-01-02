@@ -4,7 +4,7 @@ js:
     - tools
     - audio
     - ui
-    - score
+    - verdict
     - dialogue
     - desk
     - data

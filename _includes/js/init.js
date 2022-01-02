@@ -1,7 +1,7 @@
 const init = function() {
     ui.init();
     audio.init();
-    data.loadCase(1);
+    ui.showMenu("start");
 };
 
 window.addEventListener("load", init);

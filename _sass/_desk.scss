@@ -35,6 +35,19 @@
         left: 90%;
         background-image: url("/assets/img/dictionary.png");
     }
+
+    & .verdict {
+        left: 46.5%;
+        background-color: blue;
+    }
+
+    & .slot1 {
+        left: 30%;
+    }
+
+    & .invoice {
+        background-color: $white;
+    }
 }
 
 #items {
@@ -80,6 +93,23 @@
             text-shadow: -12px 12px 9.8px rgba(255, 177, 122,0.7), 
                 21px -18.1px 7.3px rgba(255, 255, 255,1), 
                 -18.1px -27.3px 30px rgba(255, 255, 255,1);
+
+            &:hover {
+                background: linear-gradient(104deg, 
+                        rgba(202, 255, 122,0) 0.9%, 
+                        rgba(202, 255, 122,1.25) 2.4%, 
+                        rgba(202, 255, 122,0.5) 5.8%, 
+                        rgba(202, 255, 122,0.1) 93%, 
+                        rgba(202, 255, 122,0.7) 96%, 
+                        rgba(202, 255, 122,0) 98%), 
+                    linear-gradient(183deg, 
+                        rgba(202, 255, 122,0) 0%, 
+                        rgba(202, 255, 122,0.3) 7.9%, 
+                        rgba(202, 255, 122,0) 15%);
+                text-shadow: -12px 12px 9.8px rgba(202, 255, 122,0.7), 
+                    21px -18.1px 7.3px rgba(255, 255, 255,1), 
+                    -18.1px -27.3px 30px rgba(255, 255, 255,1);
+            }
         }
 
         & .strikeTag {
@@ -87,100 +117,122 @@
             text-decoration-color: red;
         }
     }
-}
 
-
-    #items .content .tag:hover {
-        background: linear-gradient(104deg, 
-                rgba(202, 255, 122,0) 0.9%, 
-                rgba(202, 255, 122,1.25) 2.4%, 
-                rgba(202, 255, 122,0.5) 5.8%, 
-                rgba(202, 255, 122,0.1) 93%, 
-                rgba(202, 255, 122,0.7) 96%, 
-                rgba(202, 255, 122,0) 98%), 
-            linear-gradient(183deg, 
-                rgba(202, 255, 122,0) 0%, 
-                rgba(202, 255, 122,0.3) 7.9%, 
-                rgba(202, 255, 122,0) 15%);
-        text-shadow: -12px 12px 9.8px rgba(202, 255, 122,0.7), 
-            21px -18.1px 7.3px rgba(255, 255, 255,1), 
-            -18.1px -27.3px 30px rgba(255, 255, 255,1);
-    }
-
-#items .complaint {
-    background-image: url("/assets/img/complaintBig.png");
-}
-
-    #items .complaint .content {
-        top: 5%;
-        left: 51%;
-        width: 40%;
-        height: 90%;
-    }
-
-#items .response {
-    background-image: url("/assets/img/responseBig.png");
-}
-
-    #items .response .content {
-        top: 5%;
-        left: 51%;
-        width: 40%;
-        height: 90%;
-    }
-
-#items .transcript {
-    background-image: url("/assets/img/transcriptBig.png");
-
-    & .content {
-        top: 0;
-        left: 17%;
-        width: 39%;
-        height: 83%;
+    & .complaint {
+        background-image: url("/assets/img/complaintBig.png");
         
-        & p {
-            line-height: 1.35em;
-            text-indent: -1.5em;
-            margin-left: 2.5em;
+        & .content {
+            top: 5%;
+            left: 51%;
+            width: 40%;
+            height: 90%;
+        }
+    }
+
+
+    & .response {
+        background-image: url("/assets/img/responseBig.png");
+        
+        & .content {
+            top: 1%;
+            left: 51%;
+            width: 41%;
+            height: 90%;
+        }
+    }
+
+
+    & .transcript {
+        background-image: url("/assets/img/transcriptBig.png");
+
+        & .content {
+            top: 0;
+            left: 17%;
+            width: 39%;
+            height: 83%;
+            
+            & p {
+                line-height: 1.35em;
+                text-indent: -1.5em;
+                margin-left: 2.5em;
+            }
+
+            & .contradictory {
+                cursor: pointer;
+
+                &:hover {
+                    background-color: lightblue;
+                }
+            }
         }
 
-        & .contradictory {
-            cursor: pointer;
+        & .content2 {
+            position: absolute;
+            top: 10%;
+            left: 61%;
+            width: 21%;
+            height: 79%;
+            overflow: hidden;
+            color: $black;
+        }
 
-            &:hover {
-                background-color: lightblue;
+    }
+
+    & .dictionary {
+        background-image: url("/assets/img/dictionaryBig.png");
+        
+        & .content {
+            top: 3%;
+            left: 49%;
+            width: 46%;
+            height: 87%;
+        }
+
+        & .content2 {
+            position: absolute;
+            top: 3%;
+            left: 2%;
+            width: 46%;
+            height: 87%;
+            overflow: hidden;
+            color: $black;
+            background-color: $white;
+
+            & p {
+                margin: 1em;
             }
         }
     }
 
-    & .content2 {
-        position: absolute;
-        top: 10%;
-        left: 61%;
-        width: 21%;
-        height: 79%;
-        overflow: hidden;
-        color: $black;
+    & .verdict {
+        background-color: blue;
+
+        & .content {
+            top: 5%;
+            left: 10%;
+            width: 80%;
+            height: 90%;
+        }
     }
 
-}
+    & .invoice {
+        background-color: $white;
+        width: 40%;
+        left: 30%;
 
-#items .dictionary {
-    background-image: url("/assets/img/dictionaryBig.png");
-}
-
-    #items .dictionary .content {
-        top: 3%;
-        left: 48%;
-        width: 47%;
-        height: 87%;
+        & .content {
+            width: 100%;
+            height: 100%;
+        }
     }
+}
 
 #blocker {
+    position: absolute;
     width: 100%;
     height: 100%;
     pointer-events: none;
-    opacity: 0;
+    opacity: 0.7;
     background: $black;
     transition: all 1.5s;
 }

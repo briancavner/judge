@@ -6,6 +6,22 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 #canvas { position: absolute; top: 0; left: 0; background: #201700 url("/assets/img/courtroom.png") no-repeat; background-size: contain; width: 100%; height: 100%; max-width: 177.7777777778vh; max-height: 56.25vw; margin-left: 50vw; margin-top: 50vh; transform: translate(-50%, -50%); overflow: hidden; }
 
+#mainMenu { position: absolute; background-color: #F5F4F1; color: #201700; top: 10%; right: 30%; bottom: 10%; left: 30%; }
+
+#mainMenu .caseDesc { background-color: lightyellow; width: 90%; margin-left: 5%; height: 15%; }
+
+#mainMenu label { display: inline-block; padding: 1em 2em; margin: 0.5em; cursor: pointer; color: #201700; border-radius: 0.25em; background: white; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2), inset 0 -3px 0 rgba(0, 0, 0, 0.22); transition: 0.3s; }
+
+#mainMenu label h1 { font-size: 1em; }
+
+#mainMenu label:hover { background: #e6e6e6; color: black; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2), inset 0 -3px 0 rgba(0, 0, 0, 0.32); }
+
+#mainMenu label:active { transform: translateY(2px); box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2), inset 0px -1px 0 rgba(0, 0, 0, 0.22); }
+
+#mainMenu input { display: none; }
+
+#mainMenu input:checked + label { background: lightgreen; transform: translateY(2px); box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2), inset 0px -1px 0 rgba(0, 0, 0, 0.22); }
+
 .speech { position: absolute; background-color: #F5F4F1; color: #201700; padding: 1.125em 1.5em; border-radius: 1rem; box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3), 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.2); }
 
 .speech::before { content: ""; position: absolute; width: 0; height: 0; top: 100%; left: 5vw; border: .75rem solid transparent; border-bottom: none; border-top-color: #F5F4F1; }
@@ -48,6 +64,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 #respond button.sass:hover { background: #E3B23C; }
 
+.i { font-style: italic; }
+
 #desk { position: absolute; bottom: 0; background: url("/assets/img/desk.png") no-repeat; background-size: contain; width: 100%; height: 35%; }
 
 #desk .icon { position: absolute; background-repeat: no-repeat; top: 61%; width: 7%; height: 35.5555555556%; transition: all 1.3s; background-size: contain; }
@@ -60,6 +78,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 #desk .dictionary { left: 90%; background-image: url("/assets/img/dictionary.png"); }
 
+#desk .verdict { left: 46.5%; background-color: blue; }
+
+#desk .slot1 { left: 30%; }
+
+#desk .invoice { background-color: #F5F4F1; }
+
 #items .item { background-size: contain; background-repeat: no-repeat; position: absolute; transition: all 1.5s; top: 5%; left: 10%; margin-top: 150%; width: 80%; height: 90%; }
 
 #items .content { position: absolute; color: #201700; overflow: auto; background-color: #F5F4F1; }
@@ -68,9 +92,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 #items .content .tag { cursor: pointer; padding: 0.2% 0.6%; background: linear-gradient(104deg, rgba(255, 177, 122, 0) 0.9%, #ffb17a 2.4%, rgba(255, 177, 122, 0.5) 5.8%, rgba(255, 177, 122, 0.1) 93%, rgba(255, 177, 122, 0.7) 96%, rgba(255, 177, 122, 0) 98%), linear-gradient(183deg, rgba(255, 177, 122, 0) 0%, rgba(255, 177, 122, 0.3) 7.9%, rgba(255, 177, 122, 0) 15%); -webkit-box-decoration-break: clone; margin: -0.2% -0.6%; border-radius: 13%; text-shadow: -12px 12px 9.8px rgba(255, 177, 122, 0.7), 21px -18.1px 7.3px white, -18.1px -27.3px 30px white; }
 
-#items .content .strikeTag { text-decoration: line-through; text-decoration-color: red; }
-
 #items .content .tag:hover { background: linear-gradient(104deg, rgba(202, 255, 122, 0) 0.9%, #caff7a 2.4%, rgba(202, 255, 122, 0.5) 5.8%, rgba(202, 255, 122, 0.1) 93%, rgba(202, 255, 122, 0.7) 96%, rgba(202, 255, 122, 0) 98%), linear-gradient(183deg, rgba(202, 255, 122, 0) 0%, rgba(202, 255, 122, 0.3) 7.9%, rgba(202, 255, 122, 0) 15%); text-shadow: -12px 12px 9.8px rgba(202, 255, 122, 0.7), 21px -18.1px 7.3px white, -18.1px -27.3px 30px white; }
+
+#items .content .strikeTag { text-decoration: line-through; text-decoration-color: red; }
 
 #items .complaint { background-image: url("/assets/img/complaintBig.png"); }
 
@@ -78,7 +102,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 #items .response { background-image: url("/assets/img/responseBig.png"); }
 
-#items .response .content { top: 5%; left: 51%; width: 40%; height: 90%; }
+#items .response .content { top: 1%; left: 51%; width: 41%; height: 90%; }
 
 #items .transcript { background-image: url("/assets/img/transcriptBig.png"); }
 
@@ -94,9 +118,21 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 #items .dictionary { background-image: url("/assets/img/dictionaryBig.png"); }
 
-#items .dictionary .content { top: 3%; left: 48%; width: 47%; height: 87%; }
+#items .dictionary .content { top: 3%; left: 49%; width: 46%; height: 87%; }
 
-#blocker { width: 100%; height: 100%; pointer-events: none; opacity: 0; background: #201700; transition: all 1.5s; }
+#items .dictionary .content2 { position: absolute; top: 3%; left: 2%; width: 46%; height: 87%; overflow: hidden; color: #201700; background-color: #F5F4F1; }
+
+#items .dictionary .content2 p { margin: 1em; }
+
+#items .verdict { background-color: blue; }
+
+#items .verdict .content { top: 5%; left: 10%; width: 80%; height: 90%; }
+
+#items .invoice { background-color: #F5F4F1; width: 40%; left: 30%; }
+
+#items .invoice .content { width: 100%; height: 100%; }
+
+#blocker { position: absolute; width: 100%; height: 100%; pointer-events: none; opacity: 0.7; background: #201700; transition: all 1.5s; }
 
 #plaintiff { left: 18%; }
 

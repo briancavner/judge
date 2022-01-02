@@ -61,10 +61,7 @@ const speech = {
         transcript.add(speaker, message, nextLine.contradiction);
 
         if (nextLine.unlock) {
-            if (nextLine.unlock.addendum) {
-                const type = nextLine.unlock.addendum.replace(/[0-9]/g, '')
-                desk.items[type].addendum(data.current.addendums[nextLine.unlock.addendum]);
-            }
+            desk.unlock(nextLine.unlock);
         }
 
         setTimeout(function() {
@@ -102,12 +99,12 @@ const transcript = {
                 transcript.contradiction.contradiction !== contradiction) {
             ui.contradiction(speaker, transcript.contradiction.message, message);
             console.log("not contradictory")
-        } else if (score.contradiction.found(contradiction)) {
+        } else if (verdict.contradiction.found(contradiction)) {
             console.log("found already")
         } else {
             ui.divs.blocker.onclick(); // This is two times I've done this, it feels not good
             speech.speak(data.noButtons(data.current.contradictions[contradiction]));
-            score.contradiction.add(contradiction)
+            verdict.contradiction.add(contradiction)
         }
 
         transcript.contradiction = null;

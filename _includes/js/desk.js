@@ -1,20 +1,21 @@
 const desk = {
     items: {},
 
-    Icon: function(parent, type) {
+    Icon: function(parent, type, extra) {
         const self = this;
 
-        self.div = ui.makeDesk.icon(type);
+        self.div = ui.makeDesk.icon(type, extra);
         self.div.onclick = function() {
             parent.open();
         }
     },
 
-    Item: function(type) {
+    Item: function(type, extra = {}) {
         const self = this;
         const writer = {
             complaint: "plaintiff",
             response: "defendant",
+            evidence: "evidence",
         };
 
         const tagize = function(string) {
@@ -68,10 +69,6 @@ const desk = {
         };
         
         const makeContent = function() {
-            const dictName = function(tag) {
-                tag = tag.replace(/_/g, " ");
-                return tools.capitalize(tag);
-            };
 
             const div = document.createElement("div");
 
@@ -85,6 +82,10 @@ const desk = {
                     }
                     break;
                 case "dictionary":
+                    const dictName = function(tag) {
+                        tag = tag.replace(/_/g, " ");
+                        return tools.capitalize(tag);
+                    };
                     const navStrip = document.createElement("p");
                     navStrip.style.textAlign = "center";
                     div.appendChild(navStrip);
@@ -103,6 +104,58 @@ const desk = {
                         navStrip.appendChild(link);
                         div.appendChild(p);
                     }
+
+                    extra.content2 = document.createElement("div");
+                    extra.content2.innerHTML = `<h1>Cause(s) of Action</h2><p>${data.dictionary["cause_of_action"]}</p>`;
+
+                    for (let i = 0; i < data.current.coa.length; i++) {
+                        const p = document.createElement("p");
+                        const name = data.current.coa[i];
+                        const ol = document.createElement("ol");
+                        
+                        p.innerHTML = `<span style="font-weight:bold">${dictName(name)}</span>:`;
+
+                        for (let j = 0; j < data.dictionary[name].length; j++) {
+                            const li = document.createElement("li");
+                            li.innerHTML = data.dictionary[name][j];
+                            ol.appendChild(li);
+                        }
+
+                        p.appendChild(ol);
+                        extra.content2.appendChild(p);
+                    }
+                    break;
+                case "evidence":
+                    const arr = extra.content;
+                    const styleLine = function(line) {
+                        if (typeof(line) === "string") {
+                            return tagize(line);
+                        }
+
+                        const lineDiv = tagize(line.line);
+                        lineDiv.style = line.style;
+                        return lineDiv;
+                    }
+                    for (let i = 0; i < arr.length; i++) {
+                        const p = styleLine(arr[i]);
+                        div.appendChild(p);
+                    }
+                    break;
+                case "verdict":
+                    const h1 = document.createElement("h1");
+                    const submit = document.createElement("button");
+                    const results = {};
+                    h1.innerHTML = "Verdict Content"
+                    submit.innerHTML = "Render Verdict";
+                    submit.onclick = function() {
+                        ui.divs.blocker.style.opacity = 1;
+                        ui.divs.blocker.style.pointerEvents = null;
+                        ui.divs.backdrop.style.pointerEvents = "none"
+                        desk.items.verdict.div.style.top = "-100%";
+                        verdict.submit(results);
+                    }
+                    div.appendChild(h1);
+                    div.appendChild(submit);
                     break;
             }
 
@@ -133,15 +186,31 @@ const desk = {
         };
 
         self.type = type;
-        self.icon = new desk.Icon(self, type);
+        self.icon = new desk.Icon(self, type, extra);
         self.content = makeContent();
-        self.div = ui.makeDesk.item(type, self.content);
+        self.div = ui.makeDesk.item(type, self.content, extra);
     },
 
+    unlock: function(unlock) {
+        if (unlock.addendum) {
+            const type = unlock.addendum.replace(/[0-9]/g, '')
+            desk.items[type].addendum(data.current.addendums[unlock.addendum]);
+        }
+        if (unlock.evidence) {
+            const evidence = data.current.evidence[unlock.evidence];
+            desk.addEvidence(evidence);
+        }
+    },
 
     addItem: function(item) {
         const newItem = new desk.Item(item);
         desk.items[item] = newItem
+        ui.addToDesk(newItem);
+    },
+
+    addEvidence: function(evidence) {
+        const newItem = new desk.Item("evidence", evidence);
+        desk.items[`evidence${evidence.slot}`] = newItem;
         ui.addToDesk(newItem);
     },
 
@@ -154,5 +223,6 @@ const desk = {
         desk.addItem("response");
         desk.addItem("transcript");
         desk.addItem("dictionary");
+        desk.addItem("verdict");
     },
 };
