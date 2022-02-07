@@ -8,6 +8,15 @@ conversion:
   - The act indefinitely deprived the plaintiff of their property.
 character_propensity: Evidence or testimony about a person's character or personality traits is inadmissible when used to suggest that the person has a greater propensity or is more likely to have done something they are accused of.
 hearsay: Generally, a statement is inadmissible if it is both a) made outside of the courtroom, and b) offered as evidence to prove that the content of the statement is true (e.g. offering the out-of-court statement, "it's raining" to prove that it was raining). There are many exceptions to the general rule of hearsay.
+howToPlay:
+  - You are the newest judge of Animal Court TV. To be successful, you will have to discover the truth of the case before you, while also keeping the home audience entertained.
+  - On your desk will be the Plaintiff's Complaint in the folder with the Pi (&pi;) symbol, and the Defendant's Response in the folder with the Delta (&Delta;) symbol. Both contain highlighted key terms that you can click to question the litigant about it.
+  - During questioning, you have 3 options, you may allow the litigant to Continue to speak, rule that their testimony is Inadmissible, or give them a bit of Sass.
+  - To help you find Inadmissible testimony, read the legal dictionary on your desk during the case. It will explain the types of testimony you need to look out for.
+  - Sass will entertain the audience, but only if the litigant deserves it. Bullying a sympathetic litigant might make the audience turn against you.
+  - Check the Transcript on your desk to identify potential contradictions. Click two contradictionary sentences to question the litigant about their error.
+  - Try to find all of the relevant evidence. Spotting contraidctions and raising questions about claims that require additional evidence will often result in more submissions from the litigants.
+  - When you are ready to rule, click the gavel. You will need to side with a litigant and decide an award, if any. Then afterward, you will explain your ruling, so be prepared!
 negligence:
   - The defendant should have, and failed to, exercise reasonable care toward the plaintiff or their property;
   - The plaintiff suffered recognizable damages from personal injury or impairment to their property; and

@@ -2,13 +2,25 @@ html { margin: 0; width: 100%; height: 100%; font-size: 10px; user-select: none;
 
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0; background-color: #201700; color: #F5F4F1; font-size: 1.8rem; line-height: 2.2rem; }
 
+.b { font-weight: 600; }
+
 #backdrop { position: absolute; width: 100vw; height: 100vh; background-color: #201700; background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h16v2h-6v6h6v8H8v-6H2v6H0V0zm4 4h2v2H4V4zm8 8h2v2h-2v-2zm-8 0h2v2H4v-2zm8-8h2v2h-2V4z' fill='%23050020' fill-opacity='0.54' fill-rule='evenodd'/%3E%3C/svg%3E"); }
 
 #canvas { position: absolute; top: 0; left: 0; background: #201700 url("/assets/img/courtroom.png") no-repeat; background-size: contain; width: 100%; height: 100%; max-width: 177.7777777778vh; max-height: 56.25vw; margin-left: 50vw; margin-top: 50vh; transform: translate(-50%, -50%); overflow: hidden; }
 
-#mainMenu { position: absolute; background-color: #F5F4F1; color: #201700; top: 10%; right: 30%; bottom: 10%; left: 30%; }
+#mainMenu { position: absolute; overflow: scroll; background-color: #F5F4F1; color: #201700; top: 10%; right: 30%; bottom: 10%; left: 30%; }
 
-#mainMenu .caseDesc { background-color: lightyellow; width: 90%; margin-left: 5%; height: 15%; }
+#mainMenu h1 { text-align: center; }
+
+#mainMenu h2 { margin-top: 0.5em; font-size: 1.3em; text-align: center; }
+
+#mainMenu h3 { text-align: center; }
+
+#mainMenu p { margin: 1em; }
+
+#mainMenu .caseDesc { background-color: lightyellow; width: 90%; margin-left: 5%; height: 20%; }
+
+#mainMenu .caseDesc p { position: relative; top: 50%; transform: translateY(-50%); }
 
 #mainMenu label { display: inline-block; padding: 1em 2em; margin: 0.5em; cursor: pointer; color: #201700; border-radius: 0.25em; background: white; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2), inset 0 -3px 0 rgba(0, 0, 0, 0.22); transition: 0.3s; }
 
@@ -21,6 +33,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 #mainMenu input { display: none; }
 
 #mainMenu input:checked + label { background: lightgreen; transform: translateY(2px); box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2), inset 0px -1px 0 rgba(0, 0, 0, 0.22); }
+
+#mainMenu .mainMenuButtons { text-align: center; }
+
+#mainMenu .mainMenuButtons button { margin: 1em; }
 
 .speech { position: absolute; background-color: #F5F4F1; color: #201700; padding: 1.125em 1.5em; border-radius: 1rem; box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3), 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.2); }
 
@@ -78,7 +94,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 #desk .dictionary { left: 90%; background-image: url("/assets/img/dictionary.png"); }
 
-#desk .verdict { left: 46.5%; background-color: blue; }
+#desk .verdict { left: 46.5%; background-image: url("/assets/img/gavel.png"); }
 
 #desk .slot1 { left: 30%; }
 
@@ -127,6 +143,38 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 #items .verdict { background-color: blue; }
 
 #items .verdict .content { top: 5%; left: 10%; width: 80%; height: 90%; }
+
+#items .verdict .content .liableSwitch { position: relative; left: 30%; width: 40%; height: 3em; text-align: center; background: #C0C0C0; transition: all 0.2s ease; border-radius: 1.5em; }
+
+#items .verdict .content .liableSwitch span { position: absolute; width: 1.1em; height: 0.22em; top: 50%; left: 50%; margin: -2px 0px 0px -4px; background: rgba(0, 0, 0, 0); display: block; transform: rotate(-45deg); transition: all 0.2s ease; }
+
+#items .verdict .content .liableSwitch span:after { content: ""; display: block; position: absolute; width: 4px; height: 12px; margin-top: -8px; background: rgba(0, 0, 0, 0); transition: all 0.2s ease; }
+
+#items .verdict .content .liableSwitch label { position: absolute; cursor: pointer; color: rgba(0, 0, 0, 0.2); width: 50%; line-height: 3em; transition: all 0.2s ease; font-weight: bold; }
+
+#items .verdict .content .liableSwitch .liableLabel { left: 0; }
+
+#items .verdict .content .liableSwitch .notLiableLabel { right: 0; }
+
+#items .verdict .content .liable:checked ~ .liableSwitch { background: #00bc9c; }
+
+#items .verdict .content .notLiable:checked ~ .liableSwitch { background: #eb4f37; }
+
+#items .verdict .content .liable:checked ~ .liableSwitch .liableLabel { color: #fff; }
+
+#items .verdict .content .liable:checked ~ .liableSwitch span { background: #fff; }
+
+#items .verdict .content .notLiable:checked ~ .liableSwitch span { background: #fff; margin-left: -8px; }
+
+#items .verdict .content .notLiable:checked ~ .liableSwitch .notLiableLabel { color: #fff; }
+
+#items .verdict .content .notLiable:checked ~ .liableSwitch span:after { background: #fff; height: 20px; margin-top: -8px; margin-left: 8px; }
+
+#items .verdict .content .liable:checked ~ .liableSwitch span:after { background: #fff; }
+
+#items .verdict .content input[type=radio] { display: none; }
+
+#items .verdict .content input[type=range] { width: 80%; margin-left: 10%; }
 
 #items .invoice { background-color: #F5F4F1; width: 40%; left: 30%; }
 

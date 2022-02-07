@@ -27,10 +27,12 @@ const desk = {
                 self.div.innerHTML = displayText;
                 self.div.onclick = function() {
                     ui.divs.blocker.onclick(); // Is there a better way to triggers closing the open Item?
+                    speech.endFunction = function() {
+                        self.div.classList.remove("tag");
+                        self.div.classList.add("strikeTag");
+                        self.div.onclick = null;
+                    }
                     speech.speak(data.current.questioning[writer[type]][keyword].slice());
-                    self.div.classList.remove("tag");
-                    self.div.classList.add("strikeTag");
-                    self.div.onclick = null;
                 }
 
                 return self.div;
@@ -108,9 +110,9 @@ const desk = {
                     extra.content2 = document.createElement("div");
                     extra.content2.innerHTML = `<h1>Cause(s) of Action</h2><p>${data.dictionary["cause_of_action"]}</p>`;
 
-                    for (let i = 0; i < data.current.coa.length; i++) {
+                    for (let i = 0; i < data.current.coas.length; i++) {
                         const p = document.createElement("p");
-                        const name = data.current.coa[i];
+                        const name = data.current.coas[i];
                         const ol = document.createElement("ol");
                         
                         p.innerHTML = `<span style="font-weight:bold">${dictName(name)}</span>:`;
@@ -143,19 +145,9 @@ const desk = {
                     break;
                 case "verdict":
                     const h1 = document.createElement("h1");
-                    const submit = document.createElement("button");
-                    const results = {};
                     h1.innerHTML = "Verdict Content"
-                    submit.innerHTML = "Render Verdict";
-                    submit.onclick = function() {
-                        ui.divs.blocker.style.opacity = 1;
-                        ui.divs.blocker.style.pointerEvents = null;
-                        ui.divs.backdrop.style.pointerEvents = "none"
-                        desk.items.verdict.div.style.top = "-100%";
-                        verdict.submit(results);
-                    }
                     div.appendChild(h1);
-                    div.appendChild(submit);
+                    div.appendChild(ui.verdict());
                     break;
             }
 
@@ -166,11 +158,13 @@ const desk = {
         self.open = function() {
             ui.hideIcon(self.icon.div);
             ui.showItem(self.div, self.close);
+            audio.desk(type, "up");
         };
 
         self.close = function() {
             ui.showIcon(self.icon.div);
             ui.hideItem(self.div);
+            audio.desk(type, "down");
         };
 
         self.addendum = function(array) {

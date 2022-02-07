@@ -39,6 +39,9 @@ const speech = {
         if (arguments.length > 0) {
             speech.add(speech.tools.process(arguments));
         } else if (speech.queue.length === 0) {
+            if (speech.endFunction) {
+                speech.endFunction();
+            }
             ui.speech.close(true);
             return;
         }

@@ -24,6 +24,7 @@
 
 #mainMenu {
     position: absolute;
+    overflow: scroll;
     background-color: $white;
     color: $black;
     top: 10%;
@@ -31,11 +32,36 @@
     bottom: 10%;
     left: 30%;
 
+    h1 {
+        text-align: center;
+
+    }
+
+    h2 {
+        margin-top: 0.5em;
+        font-size: 1.3em;
+        text-align: center;
+    }
+
+    h3 {
+        text-align: center;
+    }
+
+    p {
+        margin: 1em;
+    }
+
     .caseDesc {
         background-color: lightyellow;
         width: 90%;
         margin-left: 5%;
-        height: 15%;
+        height: 20%;
+
+        p {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
     }
 
     label {
@@ -72,6 +98,14 @@
             background: lightgreen;
             transform: translateY(2px);
             box-shadow: 0 3px 10px rgba(0,0,0,0.2), inset 0px -1px 0 rgba(0,0,0,0.22); 
+        }
+    }
+
+    .mainMenuButtons {
+        text-align: center;
+
+        button {
+            margin: 1em;
         }
     }
 }

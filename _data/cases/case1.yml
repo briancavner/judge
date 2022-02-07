@@ -1,7 +1,7 @@
 title: A Petition Pursuant to a Pulverized Pig Pen
 coa:
-  - trespass_to_chattel
-  - negligence
+  trespass_to_chattel: false
+  negligence: false
 summary:
   - Plaintiff <<pname>> says that defendant <<dname>> broke her manure grate during an important social gathering at her pen, leading to embarassment and financial loss. She is suing for $260, the cost to replace her grate.
   - <<dtlname>> says that many people had used the manure grate that night, and that she was not the one to break it.

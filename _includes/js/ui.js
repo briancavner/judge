@@ -52,6 +52,7 @@ const ui = {
                         speech.speak(data.noButtons(inadmissible.convo));
                         verdict.add(inadmissible, message);
                     } else {
+                        delete speech.endFunction;
                         speech.speak(data.randomLine("j", "admonish"), data.randomLine(speaker, "admonished"));
                         if (admissible) {
                             verdict.miscall("inadmissible", message, admissible.note)
@@ -118,6 +119,114 @@ const ui = {
             p2.innerHTML = line2;
             div.appendChild(p2);
         }
+    },
+
+    verdict: function() {
+        const ruling = {
+            coa: {},
+        };
+        const div = document.createElement("div");
+        const award = document.createElement("input");
+        const awardLabel = document.createElement("label");
+        const awardAmount = document.createElement("input");
+        const submit = document.createElement("button");
+
+        const claimPlural = function(num) {
+            if (num > 1) {
+                return "these claims";
+            }
+            return "this claim";
+        };
+        
+        for (let i = 0; i < data.current.coas.length; i++) {
+            const subDiv = document.createElement("div");
+            const p = document.createElement("p");
+            const labelDiv = document.createElement("div");
+            const switchSpan = document.createElement("span");
+            const liableInput = document.createElement("input")
+            const liableLabel = document.createElement("label");
+            const xliableInput = document.createElement("input")
+            const xliableLabel = document.createElement("label");
+
+            liableInput.type = "radio";
+            liableInput.id = `findLiable${i}`
+            liableInput.classList.add("liable");
+            liableInput.name = `verdict${i}`
+            liableLabel.htmlFor = `findLiable${i}`
+            liableLabel.innerHTML = "Liable";
+            liableLabel.classList.add("liableLabel");
+            labelDiv.classList.add("liableSwitch");
+
+            liableInput.onclick = function() {
+                ruling.coa[data.current.coas[i]] = true;
+            }
+
+            xliableInput.type = "radio";
+            xliableInput.id = `findNotLiable${i}`
+            xliableInput.classList.add("notLiable");
+            xliableInput.name = `verdict${i}`
+            xliableLabel.htmlFor = `findNotLiable${i}`
+            xliableLabel.innerHTML = "Not Liable";
+            xliableLabel.classList.add("notLiableLabel");
+
+            xliableInput.onclick = function() {
+                ruling.coa[data.current.coas[i]] = false;
+            }
+
+            p.innerHTML = `On the claim of ${tools.capitalize(data.current.coas[i].replace(/_/g, " "))}, I find that the Defendant is:`
+
+            subDiv.appendChild(p);
+            subDiv.appendChild(liableInput);
+            subDiv.appendChild(xliableInput);
+            labelDiv.appendChild(liableLabel);
+            labelDiv.appendChild(xliableLabel);
+            labelDiv.appendChild(switchSpan);
+            subDiv.appendChild(labelDiv);
+            div.appendChild(subDiv);
+        }
+
+        submit.innerHTML = "Render Verdict";
+        submit.onclick = function() {
+            ui.divs.blocker.style.opacity = 1;
+            ui.divs.blocker.style.pointerEvents = null;
+            ui.divs.backdrop.style.pointerEvents = "none"
+            desk.items.verdict.div.style.top = "-100%";
+
+            ruling.award = award.value;
+            verdict.submit(ruling);
+        }
+
+        award.type = "range";
+        award.value = 0;
+        award.min = 0;
+        award.max = 5000;
+        award.step = 5;
+        award.id = `awardAmount`
+        awardLabel.htmlFor = `awardAmount`
+        awardLabel.innerHTML = `On ${claimPlural(data.current.coas.length)}, I award the Plaintiff:`;
+        awardAmount.type = "number";
+        awardAmount.value = 0;
+        awardAmount.min = 0;
+        awardAmount.max = 5000;
+
+        award.oninput = function() {
+            awardAmount.value = award.value;
+        }
+
+        awardAmount.oninput = function() {
+            if (awardAmount.value !== "" && (!Number.isInteger(parseInt(awardAmount.value)) || awardAmount.value < 0 || awardAmount.value > 5000)) {
+                awardAmount.value = award.value;
+                return;
+            }
+            award.value = awardAmount.value;
+        }
+
+        div.appendChild(awardLabel);
+        div.appendChild(awardAmount);
+        div.appendChild(award);
+        div.appendChild(submit);
+
+        return div;
     },
 
     makeLitigants: function() {
@@ -264,18 +373,58 @@ const ui = {
         const caseDesc = document.createElement("div");
         const h1 = document.createElement("h1");
         const h2 = document.createElement("h2");
+        const buttons = document.createElement("div");
         const howTo = document.createElement("button");
         const start = document.createElement("button");
         menuDiv.id = "mainMenu";
         caseDesc.classList.add("caseDesc");
+        caseDesc.innerHTML = "<p>Choose a Case:</p>";
         h1.innerHTML = "Judge Shrewdy";
         h2.innerHTML = `It's <span class="i">your</span> courtroom`
+        buttons.classList.add("mainMenuButtons");
         howTo.innerHTML = "How to Play";
         start.innerHTML = "Start Case";
         start.disabled = true;
 
+        buttons.appendChild(howTo);
+        buttons.appendChild(start);
+        
         howTo.onclick = function() {
-            return;
+            const children = menuDiv.children;
+            const divList = [];
+            const h3 = document.createElement("h3");
+            const buttonContainer = document.createElement("div");
+            const backButton = document.createElement("button");
+
+            for (let i = 0; i < children.length; i++) {
+                divList.push(children[i])
+            }
+            
+            backButton.onclick = function() {
+                menuDiv.innerHTML = "";
+
+                for (let i = 0; i < divList.length; i++) {
+                    menuDiv.appendChild(divList[i]);
+                }
+            }
+
+
+            h3.innerHTML = "How To Play";
+            backButton.innerHTML = "Back";
+            buttonContainer.classList.add("mainMenuButtons");
+
+            menuDiv.innerHTML = "";
+            menuDiv.appendChild(h3);
+
+            for (let i = 0; i < data.dictionary.howToPlay.length; i++) {
+                const p = document.createElement("p");
+                p.innerHTML = data.dictionary.howToPlay[i];
+
+                menuDiv.appendChild(p);
+            }
+
+            buttonContainer.appendChild(backButton);
+            menuDiv.appendChild(buttonContainer);
         }
 
         start.onclick = function() {
@@ -299,12 +448,15 @@ const ui = {
             const h3 = document.createElement("h3");
             input.type = "radio";
             input.id = `caseSelect${i}`
-            input.value = i;
+            // input.value = i;
             input.name = "caseSelect"
             h3.innerHTML = i;
             label.htmlFor = `caseSelect${i}`
             input.onclick = function() {
-                caseDesc.innerHTML = `<span class="b">${data.cases[`case${i}`].title}</span><br>${data.cases[`case${i}`].shortSum}`;
+                const p = document.createElement("p");
+                p.innerHTML = `<span class="b">${data.cases[`case${i}`].title}</span><br>${data.cases[`case${i}`].shortSum}`;
+                caseDesc.innerHTML = "";
+                caseDesc.appendChild(p);
                 start.disabled = false;
             }
 
@@ -313,8 +465,8 @@ const ui = {
             menuDiv.appendChild(label);
         }
 
-        menuDiv.appendChild(howTo);
-        menuDiv.appendChild(start);
+
+        menuDiv.appendChild(buttons);
 
         ui.divs.canvas.appendChild(menuDiv);
     },

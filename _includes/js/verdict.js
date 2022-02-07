@@ -33,7 +33,20 @@ const verdict = {
         },
     },
 
-    submit: function(results) {
-        console.log(results);
+    submit: function(ruling) {
+        const contradictions = {
+            found: [],
+            missed: [],
+        };
+        for (contradiction in data.current.contradictions) {
+            if (verdict.contradictions.indexOf(contradiction) !== -1 ) {
+                contradictions.found.push(contradiction);
+            } else {
+                contradictions.missed.push(contradiction);
+            }
+        }
+        console.log(ruling);
+        console.log(contradictions);
+        console.log(verdict.log);
     },
 };

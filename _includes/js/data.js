@@ -59,6 +59,7 @@ const data = {
     loadCase: function(caseNum) {
         const selectedCase = tools.deepCopy(data.cases[`case${caseNum}`]);
         data.current = data.processVars(selectedCase);
+        data.current.coas = Object.keys(data.current.coa);
 
         desk.make();
         ui.makeLitigants();
