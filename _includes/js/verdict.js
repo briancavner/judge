@@ -1,22 +1,27 @@
 const verdict = {
-    log: [],
+    log: {
+        inadmissible: {
+            found: [],
+            missed: [],
+            wrong: [],
+        }
+    },
     contradictions: [],
 
-    add: function(input, line) {
+    findInadmissible: function(input, line) {
         const entry = Object.assign({}, input); // Clone without altering original
         entry.line = line;
-        verdict.log.push(entry);
+        verdict.log.inadmissible.found.push(entry);
     },
 
-    subtract: function(input, line) {
+    missInadmissible: function(input, line) {
         const entry = Object.assign({}, input); // Clone without altering original
-        entry.weight *= -1;
         entry.line = line;
-        verdict.log.push(entry);
+        verdict.log.inadmissible.missed.push(entry);
     },
 
-    miscall: function(reason, line, note = "") {
-        verdict.log.push({type: reason, line: line, note:note})
+    wrongInadmissible: function(line, note = tools.pickOne(data.genericLines.admissible)) {
+        verdict.log.inadmissible.wrong.push({line: line, note:note})
     },
 
     contradiction: {
@@ -34,19 +39,19 @@ const verdict = {
     },
 
     submit: function(ruling) {
-        const contradictions = {
-            found: [],
-            missed: [],
-        };
+        ruling.contradiction = {};
+        ruling.inadmissible = verdict.log.inadmissible;
         for (contradiction in data.current.contradictions) {
+            ruling.contradiction[contradiction] = {};
             if (verdict.contradictions.indexOf(contradiction) !== -1 ) {
-                contradictions.found.push(contradiction);
+                ruling.contradiction[contradiction].found = true;
+                ruling.contradiction[contradiction].note = data.current.contradictions[contradiction].found
             } else {
-                contradictions.missed.push(contradiction);
+                ruling.contradiction[contradiction].found = false;
+                ruling.contradiction[contradiction].note = data.current.contradictions[contradiction].missed
             }
         }
         console.log(ruling);
-        console.log(contradictions);
         console.log(verdict.log);
     },
 };

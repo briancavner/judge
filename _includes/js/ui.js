@@ -31,7 +31,7 @@ const ui = {
             cont.classList.add("continue");
             cont.onclick = function() {
                 if (inadmissible) {
-                    verdict.subtract(inadmissible, message);
+                    verdict.missInadmissible(inadmissible.type, message);
                 }
                 ui.divs.respond.innerHTML = "";
                 speech.speak();
@@ -50,14 +50,14 @@ const ui = {
                     speech.empty();
                     if (inadmissible) {
                         speech.speak(data.noButtons(inadmissible.convo));
-                        verdict.add(inadmissible, message);
+                        verdict.findInadmissible(inadmissible.type, message);
                     } else {
                         delete speech.endFunction;
                         speech.speak(data.randomLine("j", "admonish"), data.randomLine(speaker, "admonished"));
                         if (admissible) {
-                            verdict.miscall("inadmissible", message, admissible.note)
+                            verdict.wrongInadmissible(message, admissible.note)
                         } else {
-                            verdict.miscall("inadmissible", message);
+                            verdict.wrongInadmissible(message);
                         }
                     }
                 }
@@ -125,7 +125,9 @@ const ui = {
         const ruling = {
             coa: {},
         };
+        const submitChecklist = [];
         const div = document.createElement("div");
+        const h1 = document.createElement("h1");
         const award = document.createElement("input");
         const awardLabel = document.createElement("label");
         const awardAmount = document.createElement("input");
@@ -137,6 +139,8 @@ const ui = {
             }
             return "this claim";
         };
+
+        div.appendChild(h1);
         
         for (let i = 0; i < data.current.coas.length; i++) {
             const subDiv = document.createElement("div");
@@ -148,6 +152,7 @@ const ui = {
             const xliableInput = document.createElement("input")
             const xliableLabel = document.createElement("label");
 
+            h1.innerHTML = "Judge's Ruling";
             liableInput.type = "radio";
             liableInput.id = `findLiable${i}`
             liableInput.classList.add("liable");
@@ -175,6 +180,8 @@ const ui = {
 
             p.innerHTML = `On the claim of ${tools.capitalize(data.current.coas[i].replace(/_/g, " "))}, I find that the Defendant is:`
 
+            submitChecklist.push(liableInput, xliableInput)
+
             subDiv.appendChild(p);
             subDiv.appendChild(liableInput);
             subDiv.appendChild(xliableInput);
@@ -187,6 +194,12 @@ const ui = {
 
         submit.innerHTML = "Render Verdict";
         submit.onclick = function() {
+            for (let i = 0; i < data.current.coas.length; i++) {
+                if (!submitChecklist[i * 2].checked && !submitChecklist[i * 2 + 1].checked){
+                    return;
+                }
+            }
+            
             ui.divs.blocker.style.opacity = 1;
             ui.divs.blocker.style.pointerEvents = null;
             ui.divs.backdrop.style.pointerEvents = "none"
@@ -285,14 +298,19 @@ const ui = {
 
         icon: function(type, extra) {
             const div = document.createElement("div");
+            const img = document.createElement("img");
 
             div.classList.add("icon", type);
+            img.src = `/assets/img/${type}.png`
             ui.makeDesk.tweak(div);
 
             if (type === "evidence") {
                 div.classList.add(`slot${extra.slot}`, extra.type)
+                img.src = `/assets/img/${extra.type}.png`
             }
 
+            div.appendChild(img);
+            
             return div;
         },
 
@@ -433,6 +451,7 @@ const ui = {
                     data.loadCase(i);
                     menuDiv.remove();
                     ui.divs.blocker.style.opacity = 0;
+                    audio.playSound("gavel");
                     return;
                 }
             }

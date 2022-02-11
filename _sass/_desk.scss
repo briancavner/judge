@@ -16,31 +16,38 @@
         background-size: contain;
     }
 
+    & .icon img {
+        max-width: 100%;
+        max-height: 100%;
+        transition: all 0.3s;
+    }
+
+    & .icon img:hover {
+        margin: -0.3em 0 0 -0.3em;
+        transform: scale(1.1);
+        filter: drop-shadow(0.4em 0.4em 0.2em rgba(0, 0, 0, 0.3));
+    }
+
     & .complaint {
         left: 20%;
-        background-image: url("/assets/img/complaint.png");
     }
 
     & .response {
         left: 73%;
-        background-image: url("/assets/img/response.png");
     }
 
     & .transcript {
         left: 3%;
-        background-image: url("/assets/img/transcript.png");
     }
 
     & .dictionary {
         left: 90%;
-        background-image: url("/assets/img/dictionary.png");
     }
 
     & .verdict {
         // transform: rotate(0deg) !important;
         // top: 61% !important;
         left: 46.5%;
-        background-image: url("/assets/img/gavel.png");
     }
 
     & .slot1 {
@@ -207,13 +214,26 @@
     }
 
     & .verdict {
-        background-color: blue;
+        background-image: url("/assets/img/verdictBig.png");
+        width: 74%;
 
         & .content {
-            top: 5%;
-            left: 10%;
-            width: 80%;
-            height: 90%;
+            top: 11%;
+            left: 32%;
+            width: 37%;
+            height: 76%;
+            overflow: hidden;
+            background-color: transparent;
+
+            h1 {
+                text-align: center;
+                margin-top: 0;
+                font-size: 1.5em;
+            }
+
+            p {
+                margin: 0.5em 0.1em;
+            }
 
             .liableSwitch {
                 position: relative;
@@ -308,9 +328,29 @@
                 display: none;
             }
 
+            & input[type=number] {
+                position: absolute;
+                bottom: 25%;
+                width: 20%;
+                font-size: 1.1em;
+                padding: 0.1em 0.4em;
+                left: 40%;
+                transform: translateX(-0.4em);
+            }
+
             & input[type=range] {
+                position: absolute;
+                left: 10%;
+                bottom: 19%;
                 width: 80%;
-                margin-left: 10%;
+            }
+
+            & button {
+                position: absolute;
+                left: 9%;
+                bottom: 1%;
+                width: 50%;
+                height: 7%;
             }
         }
     }

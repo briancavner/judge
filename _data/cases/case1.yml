@@ -216,15 +216,20 @@ questioning:
       - j: Bailiff, clear the courtroom!
 contradictions:
   unused:
-    - j: You say you have used <<ptlname>>'s manure grate on several occassions, <<dtlname>>?
-    - d: Yes, that's right.
-    - p: That's true, Your Honor.
-    - j: But this time it took 20 minutes to figure out?
-    - d: "..."
-    - j: Had you suffered from any brain trauma since the last time you used her grate, <<dtlname>>?
-    - d: No, Your Honor.
-    - d: The truth is I did see the grate break, and I was trying to clean it up so no one would notice. I know that was wrong, but I was so embarassed about it, Your Honor.
-    - d: But I didn't break it on purpose, I promise!
-    - j: I want you to submit an addendum to your Response, <<dtlname>>. And I want the truth this time.
-      unlock:
-        addendum: response1
+    of: d
+    convo:
+      - j: You say you have used <<ptlname>>'s manure grate on several occassions, <<dtlname>>?
+      - d: Yes, that's right.
+      - p: That's true, Your Honor.
+      - j: But this time it took 20 minutes to figure out?
+      - d: "..."
+      - j: Had you suffered from any brain trauma since the last time you used her grate, <<dtlname>>?
+      - d: No, Your Honor.
+      - d: The truth is I did see the grate break, and I was trying to clean it up so no one would notice. I know that was wrong, but I was so embarassed about it, Your Honor.
+      - d: But I didn't break it on purpose, I promise!
+      - j: I want you to submit an addendum to your Response, <<dtlname>>. And I want the truth this time.
+        unlock:
+          addendum: response1
+    found: You caught the Defendant in a contradiction! Sometimes litigants will lie about things they're embarassed about, even if it doesn't affect their legal liability. But catching these deceptions can help encourage them to be more honest about things that do matter, so well done on your digging!
+    missed: There seemed to be something contradictory about what the Defendant was saying. She seemed to be hiding something about her trip to the maneaur grate. Maybe she was embarassed with something and concealing the truth?
+    unseen: There was something untrustworthy about the Defendant that seemed unexplored. Perhaps asking more questions about a topic a litigant is trying to conceal will reveal information they would prefer you not to have?

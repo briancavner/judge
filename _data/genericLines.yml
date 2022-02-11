@@ -9,4 +9,10 @@ admonished:
   - Sorry, Your Honor.
   - Pssh, screw that.
   - Wow, that was way harsh.
-  - ...
+  - "..."
+admissible:
+  - This line wasn't inadmissible
+  - This line was admissible
+  - You should have let them testify about this
+  - This was okay to testify about
+  - This testimony should have been permitted

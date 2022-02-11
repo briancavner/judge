@@ -144,9 +144,6 @@ const desk = {
                     }
                     break;
                 case "verdict":
-                    const h1 = document.createElement("h1");
-                    h1.innerHTML = "Verdict Content"
-                    div.appendChild(h1);
                     div.appendChild(ui.verdict());
                     break;
             }

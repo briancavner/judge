@@ -106,7 +106,7 @@ const transcript = {
             console.log("found already")
         } else {
             ui.divs.blocker.onclick(); // This is two times I've done this, it feels not good
-            speech.speak(data.noButtons(data.current.contradictions[contradiction]));
+            speech.speak(data.noButtons(data.current.contradictions[contradiction].convo));
             verdict.contradiction.add(contradiction)
         }
 
