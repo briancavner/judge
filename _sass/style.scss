@@ -1,5 +1,8 @@
 $white: #F5F4F1;
 $black: #201700;
+$red: #F0544F;
+$blue: #0042ff;
+$yellow: #E3B23C;
 
 html {
     margin: 0;
@@ -13,7 +16,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     margin: 0;
     background-color: $black;
-    color: $white;
+    color: $black;
     font-size: 1rem;
     line-height: 1.3em;
 

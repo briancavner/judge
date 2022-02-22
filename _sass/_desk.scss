@@ -6,7 +6,7 @@
     width: 100%;
     height: 35%;
 
-    & .icon {
+    .icon {
         position: absolute;
         background-repeat: no-repeat;
         top: 61%;
@@ -16,51 +16,51 @@
         background-size: contain;
     }
 
-    & .icon img {
+    .icon img {
         max-width: 100%;
         max-height: 100%;
         transition: all 0.3s;
     }
 
-    & .icon img:hover {
+    .icon img:hover {
         margin: -0.3em 0 0 -0.3em;
         transform: scale(1.1);
         filter: drop-shadow(0.4em 0.4em 0.2em rgba(0, 0, 0, 0.3));
     }
 
-    & .complaint {
+    .complaint {
         left: 20%;
     }
 
-    & .response {
+    .response {
         left: 73%;
     }
 
-    & .transcript {
+    .transcript {
         left: 3%;
     }
 
-    & .dictionary {
+    .dictionary {
         left: 90%;
     }
 
-    & .verdict {
+    .verdict {
         // transform: rotate(0deg) !important;
         // top: 61% !important;
         left: 46.5%;
     }
 
-    & .slot1 {
+    .slot1 {
         left: 30%;
     }
 
-    & .invoice {
+    .invoice {
         background-color: $white;
     }
 }
 
 #items {
-    & .item {
+    .item {
         background-size: contain;
         background-repeat: no-repeat;
         position: absolute;
@@ -72,17 +72,17 @@
         height: 90%;
     }
     
-    & .content {
+    .content {
         position: absolute;
         color: $black;
         overflow: auto;
         background-color: $white;
         
-        & p {
+        p {
             margin: 1em;
         }
 
-        & .tag {
+        .tag {
             cursor: pointer;
             padding: 0.2% 0.6%;
             background: linear-gradient(104deg, 
@@ -121,16 +121,24 @@
             }
         }
 
-        & .strikeTag {
+        .strikeTag {
             text-decoration: line-through;
             text-decoration-color: red;
         }
+
+        .signature {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 2em;
+            margin: 0.8em 20% 0.1em 20%;
+            border-bottom: 1px solid $black;
+            width: 60%;
+        }
     }
 
-    & .complaint {
+    .complaint {
         background-image: url("/assets/img/complaintBig.png");
         
-        & .content {
+        .content {
             top: 5%;
             left: 51%;
             width: 40%;
@@ -139,10 +147,10 @@
     }
 
 
-    & .response {
+    .response {
         background-image: url("/assets/img/responseBig.png");
         
-        & .content {
+        .content {
             top: 1%;
             left: 51%;
             width: 41%;
@@ -150,23 +158,60 @@
         }
     }
 
+    .complaint,
+    .response {
+        .content {
+            h1 {
+                font-size: 1.2em;
+                font-weight: normal;
+                text-align: center;
+            }
 
-    & .transcript {
+            h2 {
+                font-size: 0.8em;
+                text-align: right;
+                margin-right: 1em;
+                font-weight: normal;
+            }
+
+            h3 {
+                margin-left: 1em;
+                font-size: 1.3em;
+                text-align: center;
+            }
+
+            h4 {
+                font-weight: normal;
+                margin-left: 0.75em;
+                text-align: center;
+            }
+
+            h5 {
+                font-size: 0.8em;
+                text-align: right;
+                margin-right: 2em;
+                font-weight: normal;
+            }
+        }
+    }
+
+
+    .transcript {
         background-image: url("/assets/img/transcriptBig.png");
 
-        & .content {
+        .content {
             top: 0;
             left: 17%;
             width: 39%;
             height: 83%;
             
-            & p {
+            p {
                 line-height: 1.35em;
                 text-indent: -1.5em;
                 margin-left: 2.5em;
             }
 
-            & .contradictory {
+            .contradictory {
                 cursor: pointer;
 
                 &:hover {
@@ -175,7 +220,7 @@
             }
         }
 
-        & .content2 {
+        .content2 {
             position: absolute;
             top: 10%;
             left: 61%;
@@ -187,37 +232,37 @@
 
     }
 
-    & .dictionary {
+    .dictionary {
         background-image: url("/assets/img/dictionaryBig.png");
         
-        & .content {
+        .content {
             top: 3%;
             left: 49%;
             width: 46%;
             height: 87%;
         }
 
-        & .content2 {
+        .content2 {
             position: absolute;
             top: 3%;
             left: 2%;
             width: 46%;
             height: 87%;
-            overflow: hidden;
+            overflow: auto;
             color: $black;
             background-color: $white;
 
-            & p {
+            p {
                 margin: 1em;
             }
         }
     }
 
-    & .verdict {
+    .verdict {
         background-image: url("/assets/img/verdictBig.png");
         width: 74%;
 
-        & .content {
+        .content {
             top: 11%;
             left: 32%;
             width: 37%;
@@ -235,117 +280,145 @@
                 margin: 0.5em 0.1em;
             }
 
-            .liableSwitch {
-                position: relative;
-                left: 30%;
-                width: 40%;
-                height: 3em;
+            .rulingContainer {
+                position: absolute;
+                top: 2em;
+                bottom: 45%;
+                overflow-y: auto;
+            }
+
+            .subDiv {
+                width: 100%;
                 text-align: center;
-                background: #C0C0C0;
-                transition: all 0.2s ease;
-                border-radius: 1.5em;
+            }
+
+            @keyframes wiggleAnim {
+                33% {left: -0.3em;}
+                67% {left: 0.3em;}
+            }
+
+            .wiggleAnim {
+                + .liableBox {
+                    animation-name: wiggleAnim;
+                    animation-duration: 0.2s;
+                    animation-iteration-count: infinite;
+                }
+            }
+
+            input[type="radio"] {
+                display: none;
                 
-                & span {
-                    position: absolute;
-                    width: 1.1em;
-                    height: 0.22em;
-                    top: 50%;
-                    left: 50%;
-                    margin: -2px 0px 0px -4px;
-                    background: rgba(0,0,0,0);
-                    display: block;
-                    transform: rotate(-45deg);
-                    transition: all 0.2s ease;
-                    
-                    &:after {
-                        content: "";
-                        display: block;
-                        position: absolute;
-                        width: 4px;
-                        height: 12px;
-                        margin-top: -8px;
-                        background: rgba(0,0,0,0);
-                        transition: all 0.2s ease;
+                &:checked {
+                    + .liableBox {
+                        &.liablePlaintiff {
+                            background-color: $red;
+                        }
+                        &.liableDefendant {
+                            background-color: $blue;
+                        }
+                        span {
+                            color: $white;
+                            margin-top: 0.75em;
+                        }
+                        
+                        img {
+                            top: 0.25em;
+                            opacity: 1;
+                        }
+                    }
+                }
+            }
+            
+            .liableBox {
+                background-color: $white;
+                left: 0;
+                margin: 0 0.5em;
+                width: 40%;
+                height: 3.5em;
+                transition: all 250ms ease;
+                display: inline-block;
+                text-align: center;
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+
+                &.liablePlaintiff {
+                    border: 2px solid $red;
+
+                    span {
+                        color: $red;
+                    }
+                }
+                &.liableDefendant {
+                    border: 2px solid $blue;
+
+                    span {
+                        color: $blue;
                     }
                 }
                 
-                & label {
+                &:active {
+                  top: 0.5em;
+                }
+                
+                span {
+                  position: absolute;
+                  left: 0;
+                  right: 0;
+                  transition: all 300ms ease;
+                  font-size: 1.1em;
+                  top: 50%;
+                  transform: translateY(-50%);
+                }
+
+                img {
                     position: absolute;
-                    cursor: pointer;
-                    color: rgba(0,0,0,0.2);
-                    width: 50%;
-                    line-height: 3em;
-                    transition: all 0.2s ease;
-                    font-weight: bold;
+                    left: 50%;
+                    display: block;
+                    width: 2em;
+                    height: 2em;
+                    transform: translateX(-50%);
+                    top: -4em;
+                    opacity: 0;
+                    transition: all 300ms ease-in-out;
                 }
+              }
 
-                & .liableLabel {
-                    left: 0
-                }
-
-                & .notLiableLabel {
-                    right: 0
-                }
-            }
-
-            & .liable:checked ~ .liableSwitch {
-                background: #00bc9c;
-            }
-            
-            & .notLiable:checked ~ .liableSwitch {
-                background: #eb4f37;
-            }
-
-            & .liable:checked ~ .liableSwitch .liableLabel {
-                color: #fff;
-            }
-
-            & .liable:checked ~ .liableSwitch span {
-                background: #fff;
-            }
-
-            & .notLiable:checked ~ .liableSwitch span {
-                background: #fff;
-                margin-left: -8px;
-            }
-
-            & .notLiable:checked ~ .liableSwitch .notLiableLabel {
-                color: #fff;
-            }
-
-            & .notLiable:checked ~ .liableSwitch span:after {
-                background: #fff;
-                height: 20px;
-                margin-top: -8px;
-                margin-left: 8px;
-            }
-
-            & .liable:checked ~ .liableSwitch span:after {
-                background: #fff;
-            }
-
-            & input[type=radio] {
-                display: none;
-            }
-
-            & input[type=number] {
+            #awardAmountLabel {
                 position: absolute;
-                bottom: 25%;
+                bottom: 32%;
+            }
+
+            .dollarSign {
+                position: absolute;
+                font-size: 1.1em;
+                right: 58%;
+                bottom: 24%;
+                padding: 1% 0;
+            }
+
+            input[type=number] {
+                position: absolute;
+                bottom: 24%;
                 width: 20%;
                 font-size: 1.1em;
-                padding: 0.1em 0.4em;
-                left: 40%;
-                transform: translateX(-0.4em);
+                padding: 0.5% 0.5% 0.5% 3.5%;
+                left: 38%;
+
+                &::-webkit-inner-spin-button, 
+                &::-webkit-outer-spin-button {
+                    opacity: 1;
+                }
             }
 
-            & input[type=range] {
+            input[type=range] {
                 position: absolute;
                 left: 10%;
-                bottom: 19%;
+                bottom: 18%;
                 width: 80%;
             }
 
-            & button {
+            button {
                 position: absolute;
                 left: 9%;
                 bottom: 1%;
@@ -355,12 +428,12 @@
         }
     }
 
-    & .invoice {
+    .invoice {
         background-color: $white;
         width: 40%;
         left: 30%;
 
-        & .content {
+        .content {
             width: 100%;
             height: 100%;
         }

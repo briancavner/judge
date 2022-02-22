@@ -1,6 +1,6 @@
 html { margin: 0; width: 100%; height: 100%; font-size: 10px; user-select: none; }
 
-body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0; background-color: #201700; color: #F5F4F1; font-size: 1rem; line-height: 1.3em; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0; background-color: #201700; color: #201700; font-size: 1rem; line-height: 1.3em; }
 
 @media screen and (min-width: 640px) { body { font-size: 1.3rem; } }
 
@@ -14,7 +14,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 #canvas { position: absolute; top: 0; left: 0; background: #201700 url("/assets/img/courtroom.png") no-repeat; background-size: contain; width: 100%; height: 100%; max-width: 177.7777777778vh; max-height: 56.25vw; margin-left: 50vw; margin-top: 50vh; transform: translate(-50%, -50%); overflow: hidden; }
 
-#mainMenu { position: absolute; overflow: scroll; background-color: #F5F4F1; color: #201700; top: 10%; right: 30%; bottom: 10%; left: 30%; }
+#mainMenu { position: absolute; overflow-y: auto; background-color: #F5F4F1; color: #201700; top: 10%; right: 30%; bottom: 10%; left: 30%; }
 
 #mainMenu h1 { text-align: center; }
 
@@ -42,7 +42,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 #mainMenu .mainMenuButtons { text-align: center; }
 
-#mainMenu .mainMenuButtons button { margin: 1em; }
+#mainMenu .mainMenuButtons button { margin: 1em; padding: 1em; }
+
+#finalScreen { position: absolute; top: 7%; left: 20%; width: 60%; height: 86%; border: 0.25em solid #D4AF37; outline: 0.75em solid #F5F4F1; background-color: #F5F4F1; box-shadow: 2em 2em 1em 0 rgba(0, 0, 0, 0.75); transform: translate(-0.25em, -0.25em); opacity: 0; transition: opacity 2s; }
+
+#finalScreen h1 { text-align: center; }
 
 .speech { position: absolute; background-color: #F5F4F1; color: #201700; padding: 1.125em 1.5em; border-radius: 1rem; box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3), 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.2); }
 
@@ -56,17 +60,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 .jSpeech { min-width: 4%; max-width: 50%; bottom: 30%; left: 15%; }
 
-#respond { position: absolute; background-color: #201700; border: 2px solid #F5F4F1; top: 75%; bottom: 5%; left: 25%; right: 25%; display: none; overflow: hidden; text-align: center; }
+#respond { position: absolute; background-color: #201700; border: 2px solid #F5F4F1; top: 75%; bottom: 5%; left: 25%; right: 25%; display: none; overflow: hidden; }
 
-#respond button { position: relative; top: 15%; background: #333; color: #F5F4F1; margin: 0 1.6666666667%; width: 30%; height: 70%; border: 0; font-size: 2vmin; text-transform: uppercase; border-radius: 4px; transition: .6s; overflow: hidden; }
+#respond button { position: absolute; top: 15%; background: #333; color: #F5F4F1; width: 30%; height: 70%; border: 0; font-size: 1.2em; text-transform: uppercase; border-radius: 0.25em; transition: .6s; overflow: hidden; }
 
-#respond button:first-letter { font-weight: bold; font-size: 150%; }
+#respond button:first-letter { font-weight: bold; font-size: 1.8em; }
 
 #respond button:focus { outline: 0; }
 
-#respond button:before { content: ''; display: block; position: absolute; background: rgba(255, 255, 255, 0.5); width: 60px; height: 100%; left: 0; top: 0; opacity: .5; filter: blur(30px); transform: translateX(-100px) skewX(-15deg); }
+#respond button:before { content: ""; display: block; position: absolute; background: rgba(255, 255, 255, 0.5); width: 60px; height: 100%; left: 0; top: 0; opacity: .5; filter: blur(30px); transform: translateX(-100px) skewX(-15deg); }
 
-#respond button:after { content: ''; display: block; position: absolute; background: rgba(255, 255, 255, 0.2); width: 30px; height: 100%; left: 30px; top: 0; opacity: 0; filter: blur(5px); transform: translateX(-100px) skewX(-15deg); }
+#respond button:after { content: ""; display: block; position: absolute; background: rgba(255, 255, 255, 0.2); width: 30px; height: 100%; left: 30px; top: 0; opacity: 0; filter: blur(5px); transform: translateX(-100px) skewX(-15deg); }
 
 #respond button:hover { background: #bbb; cursor: pointer; }
 
@@ -74,15 +78,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 #respond button:hover:after { transform: translateX(300px) skewX(-15deg); opacity: 1; transition: .7s; }
 
-#respond button.continue { background: #4C674C; }
+#respond button.continue { left: 35%; background: #4C674C; }
 
 #respond button.continue:hover { background: #338033; }
 
-#respond button.inadmissible { background: #AF9392; }
+#respond button.inadmissible { left: 67.5%; background: #AF9392; }
 
 #respond button.inadmissible:hover { background: #F0544F; }
 
-#respond button.sass { background: #A0967E; }
+#respond button.sass { left: 2.5%; background: #A0967E; }
 
 #respond button.sass:hover { background: #E3B23C; }
 
@@ -122,6 +126,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 #items .content .strikeTag { text-decoration: line-through; text-decoration-color: red; }
 
+#items .content .signature { font-family: 'Brush Script MT', cursive; font-size: 2em; margin: 0.8em 20% 0.1em 20%; border-bottom: 1px solid #201700; width: 60%; }
+
 #items .complaint { background-image: url("/assets/img/complaintBig.png"); }
 
 #items .complaint .content { top: 5%; left: 51%; width: 40%; height: 90%; }
@@ -129,6 +135,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 #items .response { background-image: url("/assets/img/responseBig.png"); }
 
 #items .response .content { top: 1%; left: 51%; width: 41%; height: 90%; }
+
+#items .complaint .content h1, #items .response .content h1 { font-size: 1.2em; font-weight: normal; text-align: center; }
+
+#items .complaint .content h2, #items .response .content h2 { font-size: 0.8em; text-align: right; margin-right: 1em; font-weight: normal; }
+
+#items .complaint .content h3, #items .response .content h3 { margin-left: 1em; font-size: 1.3em; text-align: center; }
+
+#items .complaint .content h4, #items .response .content h4 { font-weight: normal; margin-left: 0.75em; text-align: center; }
+
+#items .complaint .content h5, #items .response .content h5 { font-size: 0.8em; text-align: right; margin-right: 2em; font-weight: normal; }
 
 #items .transcript { background-image: url("/assets/img/transcriptBig.png"); }
 
@@ -146,7 +162,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 #items .dictionary .content { top: 3%; left: 49%; width: 46%; height: 87%; }
 
-#items .dictionary .content2 { position: absolute; top: 3%; left: 2%; width: 46%; height: 87%; overflow: hidden; color: #201700; background-color: #F5F4F1; }
+#items .dictionary .content2 { position: absolute; top: 3%; left: 2%; width: 46%; height: 87%; overflow: auto; color: #201700; background-color: #F5F4F1; }
 
 #items .dictionary .content2 p { margin: 1em; }
 
@@ -158,39 +174,50 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
 #items .verdict .content p { margin: 0.5em 0.1em; }
 
-#items .verdict .content .liableSwitch { position: relative; left: 30%; width: 40%; height: 3em; text-align: center; background: #C0C0C0; transition: all 0.2s ease; border-radius: 1.5em; }
+#items .verdict .content .rulingContainer { position: absolute; top: 2em; bottom: 45%; overflow-y: auto; }
 
-#items .verdict .content .liableSwitch span { position: absolute; width: 1.1em; height: 0.22em; top: 50%; left: 50%; margin: -2px 0px 0px -4px; background: rgba(0, 0, 0, 0); display: block; transform: rotate(-45deg); transition: all 0.2s ease; }
+#items .verdict .content .subDiv { width: 100%; text-align: center; }
 
-#items .verdict .content .liableSwitch span:after { content: ""; display: block; position: absolute; width: 4px; height: 12px; margin-top: -8px; background: rgba(0, 0, 0, 0); transition: all 0.2s ease; }
+@keyframes wiggleAnim { 33% { left: -0.3em; }
+  67% { left: 0.3em; } }
 
-#items .verdict .content .liableSwitch label { position: absolute; cursor: pointer; color: rgba(0, 0, 0, 0.2); width: 50%; line-height: 3em; transition: all 0.2s ease; font-weight: bold; }
+#items .verdict .content .wiggleAnim + .liableBox { animation-name: wiggleAnim; animation-duration: 0.2s; animation-iteration-count: infinite; }
 
-#items .verdict .content .liableSwitch .liableLabel { left: 0; }
+#items .verdict .content input[type="radio"] { display: none; }
 
-#items .verdict .content .liableSwitch .notLiableLabel { right: 0; }
+#items .verdict .content input[type="radio"]:checked + .liableBox.liablePlaintiff { background-color: #F0544F; }
 
-#items .verdict .content .liable:checked ~ .liableSwitch { background: #00bc9c; }
+#items .verdict .content input[type="radio"]:checked + .liableBox.liableDefendant { background-color: #0042ff; }
 
-#items .verdict .content .notLiable:checked ~ .liableSwitch { background: #eb4f37; }
+#items .verdict .content input[type="radio"]:checked + .liableBox span { color: #F5F4F1; margin-top: 0.75em; }
 
-#items .verdict .content .liable:checked ~ .liableSwitch .liableLabel { color: #fff; }
+#items .verdict .content input[type="radio"]:checked + .liableBox img { top: 0.25em; opacity: 1; }
 
-#items .verdict .content .liable:checked ~ .liableSwitch span { background: #fff; }
+#items .verdict .content .liableBox { background-color: #F5F4F1; left: 0; margin: 0 0.5em; width: 40%; height: 3.5em; transition: all 250ms ease; display: inline-block; text-align: center; cursor: pointer; position: relative; overflow: hidden; }
 
-#items .verdict .content .notLiable:checked ~ .liableSwitch span { background: #fff; margin-left: -8px; }
+#items .verdict .content .liableBox.liablePlaintiff { border: 2px solid #F0544F; }
 
-#items .verdict .content .notLiable:checked ~ .liableSwitch .notLiableLabel { color: #fff; }
+#items .verdict .content .liableBox.liablePlaintiff span { color: #F0544F; }
 
-#items .verdict .content .notLiable:checked ~ .liableSwitch span:after { background: #fff; height: 20px; margin-top: -8px; margin-left: 8px; }
+#items .verdict .content .liableBox.liableDefendant { border: 2px solid #0042ff; }
 
-#items .verdict .content .liable:checked ~ .liableSwitch span:after { background: #fff; }
+#items .verdict .content .liableBox.liableDefendant span { color: #0042ff; }
 
-#items .verdict .content input[type=radio] { display: none; }
+#items .verdict .content .liableBox:active { top: 0.5em; }
 
-#items .verdict .content input[type=number] { position: absolute; bottom: 25%; width: 20%; font-size: 1.1em; padding: 0.1em 0.4em; left: 40%; transform: translateX(-0.4em); }
+#items .verdict .content .liableBox span { position: absolute; left: 0; right: 0; transition: all 300ms ease; font-size: 1.1em; top: 50%; transform: translateY(-50%); }
 
-#items .verdict .content input[type=range] { position: absolute; left: 10%; bottom: 19%; width: 80%; }
+#items .verdict .content .liableBox img { position: absolute; left: 50%; display: block; width: 2em; height: 2em; transform: translateX(-50%); top: -4em; opacity: 0; transition: all 300ms ease-in-out; }
+
+#items .verdict .content #awardAmountLabel { position: absolute; bottom: 32%; }
+
+#items .verdict .content .dollarSign { position: absolute; font-size: 1.1em; right: 58%; bottom: 24%; padding: 1% 0; }
+
+#items .verdict .content input[type=number] { position: absolute; bottom: 24%; width: 20%; font-size: 1.1em; padding: 0.5% 0.5% 0.5% 3.5%; left: 38%; }
+
+#items .verdict .content input[type=number]::-webkit-inner-spin-button, #items .verdict .content input[type=number]::-webkit-outer-spin-button { opacity: 1; }
+
+#items .verdict .content input[type=range] { position: absolute; left: 10%; bottom: 18%; width: 80%; }
 
 #items .verdict .content button { position: absolute; left: 9%; bottom: 1%; width: 50%; height: 7%; }
 

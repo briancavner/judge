@@ -5,6 +5,8 @@ const data = {
 
     genericLines: {{ site.data.genericLines | jsonify }},
 
+    uiText: {{ site.data.uiText | jsonify }},
+
     speakers: {
         j: "Judge",
         p: "Plaintiff",
@@ -17,6 +19,7 @@ const data = {
             ptitle: obj.plaintiff.title,
             dname: obj.defendant.name,
             dtitle: obj.defendant.title,
+            awardSought: obj.awardSought,
         };
 
         vars.pfname = vars.pname.split(" ")[0];
@@ -60,6 +63,7 @@ const data = {
         const selectedCase = tools.deepCopy(data.cases[`case${caseNum}`]);
         data.current = data.processVars(selectedCase);
         data.current.coas = Object.keys(data.current.coa);
+        data.current.caseNum = `${tools.rand(100, 999)}${tools.padNumber(caseNum, 3)}`
 
         desk.make();
         ui.makeLitigants();

@@ -37,4 +37,20 @@ const tools = {
     deepCopy: function(obj) {
         return JSON.parse(JSON.stringify(obj));
     },
+
+    padNumber: function(num, length) {
+        let prefix = "";
+
+        if (num < 0) {
+            num *= -1;
+            prefix = "-";
+        }
+        
+        let str = `${num}`;
+        while (str.length < length) {
+            str = `0${str}`;
+        }
+
+        return `${prefix}${str}`;
+    },
 };

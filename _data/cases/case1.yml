@@ -1,24 +1,31 @@
 title: A Petition Pursuant to a Pulverized Pig Pen
 coa:
-  trespass_to_chattel: false
-  negligence: false
+  trespass_to_chattel:
+    liable: false
+    note: Trespass to chattel would have required the Defendant to intentionally break the maneaur grate, but it seems like it was an accident.
+  negligence:
+    liable: false
+    note: The Defendant's actions didn't seem negligent. It's not clear that she failed to exercise reasonable care. It seems like she was using the maneaur grate normally, and breaking it is not a reasonably foreseeable outcome of normal use.
 summary:
-  - Plaintiff <<pname>> says that defendant <<dname>> broke her manure grate during an important social gathering at her pen, leading to embarassment and financial loss. She is suing for $260, the cost to replace her grate.
+  - Plaintiff <<pname>> says that Defendant <<dname>> broke her manure grate during an important social gathering at her pen, leading to embarassment and financial loss. She is suing for $<<awardSought>>, the cost to replace her grate.
   - <<dtlname>> says that many people had used the manure grate that night, and that she was not the one to break it.
 shortSum:
   A manure grate broken during a barnyard shindig can be fixed, but the friendship it also broke could never be repaired.
+awardSought: 260
 plaintiff:
   name: Sally Swineman
   title: Ms.
   appearance:
     head: 3
     body: 6
+  sass: 2
 defendant:
   name: Carla Heiferson
   title: Ms.
   appearance:
     head: 6
     body: 2
+  sass: 1
 dictionary:
   - comparative_fault
   - standard_of_evidence
@@ -26,12 +33,12 @@ dictionary:
   - hearsay
   - statement_by_party_opponent
 complaint:
-  - I am a [[long-time resident|long]] of Flourishing Fields, and a respected member of the community. The defendant, <<dtlname>>, is my neighbor and former friend.
+  - I am a [[long-time resident|long]] of Flourishing Fields, and a respected member of the community. The Defendant, <<dtlname>>, is my neighbor and former friend.
   - On the evening of October 11, I invited <<dtlname>> and several other community members to a [[social gathering|gathering]] at my pen. The farm was going to elect a [[new livestock representative|rep]], and I wanted to run, so I was having a little campaign party to get the support of my friends.
   - About two hours into the event, we had just had dinner, and <<dtlname>> went to the [[manure grate|grate]]. She was in there for [[twenty minutes|time]], and I heard a loud crack while she was using it. When she came out I asked if everything was alright, and she said yes but she [[looked guilty|guilty]]. I [[discovered later|later]] when another guest tried to use the grate that it had been broken.
   - I [[confronted]] <<dtlname>> about it and she denied breaking my grate. I told her [[I didn't believe her|believe]], and she starting [[making a scene|scene]]. When I asked her to leave, she said some very nasty things to me and stormed out.
   - The evening at that point was pretty much ruined and everyone left shortly after her. I was so embarassed.
-  - I got [[an estimate|estimate]] to fix my manure grate the next day. It cost $260, and I believe <<dtlname>> is [[responsible]] because she is the one who broke the grate.
+  - I got [[an estimate|estimate]] to fix my manure grate the next day. It cost $<<awardSought>>, and I believe <<dtlname>> is [[responsible]] because she is the one who broke the grate.
 response:
   - My neighbor, <<ptlname>>, invited me and some other neighbors over for dinner and to chit-chat. I had been over [[several times|several]] and considered her a good friend.
   - <<ptlname>> started talking about some kind of election she was running in, and I left to use the grate. There wasn't any problem with it when I got in there.
@@ -69,7 +76,6 @@ questioning:
       - p: I was actually a little afraid it might happen when I saw her go in there, Your Honor.
       - p: Everyone knows about <<dtlname>>'s weight issue, it's not a secret around the farm.
         sass:
-          type: rude
           convo:
             - j: Don't tell me "what everyone knows", just tell me why you say were afraid it might happen.
       - p: My good girlfriend Lana Lamb had told me that she saw <<dtlname>> nearly knock over a fence when she leaned on it.
@@ -83,18 +89,15 @@ questioning:
       - j: When you spoke with <<dtlname>> after discovering your grate had broken, what did you say?
       - p: I said, "<<dfname>>, is there anything you want to tell me about my manure grate?"
         sass:
-          type: lie
           convo:
             - j: Do you really expect me to believe from the tone of your complaint that <span class="i">that</span> is how you asked her?
       - d: That is so not true, <<pfname>>, and you know it. You came at me yelling right from the beginning.
         sass:
-          type: crosstalk
           convo:
             - j: Hey, hey <<dtlname>>, do I look like I'm in need of help from you?
             - d: I'm sorry, Your Honor.
       - p: I did not, <<dfname>>, I was not angry until you started denying it.
         sass:
-          type: crosstalk
           convo:
             - j: Stop talking to each other. When you're here, talk to me. Answer my question.
       - p: I guess I was a little upset at first, but I said, "<<dfname>>, I know you broke my grate and I want you to pay for it"
@@ -116,12 +119,11 @@ questioning:
       - p: I never had an issue with it before. <<dtlname>> has even used it.
       - p: But I guess that was before she put on some weight.
         sass:
-          type: rude
           convo:
             - j: Let me tell you something, madam, you are no petite piglet yourself, so I don't want to hear your comments about her weight.
             - d: Thank you, Your Honor.
         admissible:
-          note: Even though the plaintiff said this as a rude personal attack, the fact that the defendant gained weight might be relevant in determining how and why the grate broke. Ironically, the plaintiff's insult ends up being evidence against her case; if the grate broke as a result of the defendant's weight, it suggests that she did not intentionally or negligently break it.
+          note: Even though the Plaintiff said this as a rude personal attack, the fact that the Defendant gained weight might be relevant in determining how and why the grate broke. Ironically, the Plaintiff's insult ends up being evidence against her case; if the grate broke as a result of the Defendant's weight, it suggests that she did not intentionally or negligently break it.
     guilty:
       - j: Why do you say that <<dtlname>> "looked guilty"? What was she doing?
       - p: She wouldn't make eye contact, she seemed nervous, her face was flushed pink, she was jittering...
@@ -152,7 +154,7 @@ questioning:
       - j: Have you repaired or replaced your manure grate in that time?
       - p: No, it's been the same one since I moved in. No prior problems with it.
     responsible:
-      - j: Tell me why you believe the defendant is responsible for the damage to your grate.
+      - j: Tell me why you believe the Defendant is responsible for the damage to your grate.
       - p: It's just common sense, Your Honor. "You break it, you buy it."
       - p: If you break something that belongs to someone, you have to pay to fix it.
       - p: I don't want <<dfname>> to prison or nothing. I just want her to pay for what she broke.
@@ -163,7 +165,7 @@ questioning:
       - p: No, Your Honor. Everyone was really supportative and nice.
         contradiction: intentional
     scene:
-      - j: In what way did the defendant "make a scene", <<ptlname>>?
+      - j: In what way did the Defendant "make a scene", <<ptlname>>?
       - p: She just kept denying breaking the grate, which was getting me frustrated, so I was insisting to her that I knew she did and I expected her to pay to fix it.
     time:
       - j: Did you keep a stopwatch running while she was using your manure grate, <<ptlname>>?
@@ -181,7 +183,6 @@ questioning:
       - d: It was just hard for me to figure out how to use the grate. It took me several minutes to figure out.
         contradiction: unused
         sass:
-          type: lie
           convo:
             - j: You don't strike me as that dumb of a woman, <<dtlname>>.
             - d: Thank you, Your Honor.
@@ -196,7 +197,6 @@ questioning:
       - d: No, Your Honor, just using it normally.
       - p: It didn't break when everyone else was using it normally.
         sass:
-          type: rude
           convo:
             - j: I didn't ask for your input, <<ptlname>>.
             - d: I apologize, Your Honor.
@@ -233,3 +233,20 @@ contradictions:
     found: You caught the Defendant in a contradiction! Sometimes litigants will lie about things they're embarassed about, even if it doesn't affect their legal liability. But catching these deceptions can help encourage them to be more honest about things that do matter, so well done on your digging!
     missed: There seemed to be something contradictory about what the Defendant was saying. She seemed to be hiding something about her trip to the maneaur grate. Maybe she was embarassed with something and concealing the truth?
     unseen: There was something untrustworthy about the Defendant that seemed unexplored. Perhaps asking more questions about a topic a litigant is trying to conceal will reveal information they would prefer you not to have?
+verdictWrong: The network's legal experts think you may have made a mistake in your ruling.
+verdictRight: The network's legal experts are very happy with your ruling! You seem to have understood and applied the law well, and came to the correct verdict.
+awardRight: 0
+awardWrong:
+  70:
+    line: You seem to have awarded an amount just for the labor costs. If the Defendant were liable, she would be responsible for more than just the labor; she would have to pay for a reasonably similar gate replacement too.
+    score: 2
+  190:
+    line: You seem to have awarded an amount just for the grate costs, minus labor. If the Defendant were liable, she would be responsible for all of the fees associated with replacing the grate, which would include reasonable labor costs.
+    score: 2
+  260:
+    line: But you did award the correct amount of money, if the Defendant would have been liable. Unfortunately, it looks like this verdict is going to have to come out of your show's budget.
+    score: 3
+awardLines:
+  right: You were correct to award the Plaintiff no money on her claim. You may have noticed that you can award up to three times what the Plaintiff is requesting, so consider this for future cases!
+  wrongHigh: But even if the Defendant were liable, the award you chose does not seem consistent with the evidence. Make sure to review everything thoroughly, otherwise your ruling may be subject to review! We will have to pay for that verdict from your show's budget.
+  wrongLow: This line is unused (#102)

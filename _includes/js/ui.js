@@ -33,6 +33,9 @@ const ui = {
                 if (inadmissible) {
                     verdict.missInadmissible(inadmissible.type, message);
                 }
+                if (sass) {
+                    verdict.missSass(speaker);
+                }
                 ui.divs.respond.innerHTML = "";
                 speech.speak();
             }
@@ -65,10 +68,10 @@ const ui = {
                     ui.divs.respond.innerHTML = "";
                     if (sass) {
                         speech.addToFront(data.noButtons(sass.convo));
-                        verdict.add(sass, message);
+                        verdict.findSass(speaker);
                     } else {
                         speech.addToFront(data.randomLine("j", "admonish"), data.randomLine(speaker, "admonished"))
-                        verdict.miscall("sass", message);
+                        verdict.wrongSass(speaker);
                     }
                     speech.speak();
                 }
@@ -128,8 +131,10 @@ const ui = {
         const submitChecklist = [];
         const div = document.createElement("div");
         const h1 = document.createElement("h1");
+        const rulingContainer = document.createElement("div");
         const award = document.createElement("input");
         const awardLabel = document.createElement("label");
+        const dollarSign = document.createElement("div");
         const awardAmount = document.createElement("input");
         const submit = document.createElement("button");
 
@@ -140,70 +145,95 @@ const ui = {
             return "this claim";
         };
 
+        const rulingMade = function() {
+            for (let i = 0; i < data.current.coas.length; i++) {
+                if (!submitChecklist[i * 2].checked && !submitChecklist[i * 2 + 1].checked){
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        h1.innerHTML = "Judge's Ruling";
+        rulingContainer.classList.add("rulingContainer");
+
         div.appendChild(h1);
+        div.appendChild(rulingContainer);
         
         for (let i = 0; i < data.current.coas.length; i++) {
             const subDiv = document.createElement("div");
             const p = document.createElement("p");
-            const labelDiv = document.createElement("div");
-            const switchSpan = document.createElement("span");
+            const liableBox = document.createElement("div");
             const liableInput = document.createElement("input")
             const liableLabel = document.createElement("label");
+            const liableSpan = document.createElement("span");
+            const liableFace = document.createElement("img");
+            const xliableBox = document.createElement("div");
             const xliableInput = document.createElement("input")
             const xliableLabel = document.createElement("label");
+            const xliableSpan = document.createElement("span");
+            const xliableFace = document.createElement("img");
 
-            h1.innerHTML = "Judge's Ruling";
+            subDiv.classList.add("subDiv");
+
             liableInput.type = "radio";
-            liableInput.id = `findLiable${i}`
-            liableInput.classList.add("liable");
             liableInput.name = `verdict${i}`
-            liableLabel.htmlFor = `findLiable${i}`
-            liableLabel.innerHTML = "Liable";
-            liableLabel.classList.add("liableLabel");
-            labelDiv.classList.add("liableSwitch");
+            liableSpan.innerHTML = "Plaintiff";
+            liableBox.classList.add("liableBox", "liablePlaintiff");
+            liableFace.src = `/assets/img/heads/${data.current.plaintiff.appearance.head}.png`
 
             liableInput.onclick = function() {
                 ruling.coa[data.current.coas[i]] = true;
+
+                if (rulingMade()) {
+                    submit.disabled = false;
+                }
             }
 
             xliableInput.type = "radio";
-            xliableInput.id = `findNotLiable${i}`
-            xliableInput.classList.add("notLiable");
             xliableInput.name = `verdict${i}`
-            xliableLabel.htmlFor = `findNotLiable${i}`
-            xliableLabel.innerHTML = "Not Liable";
-            xliableLabel.classList.add("notLiableLabel");
+            xliableSpan.innerHTML = "Defendant";
+            xliableBox.classList.add("liableBox", "liableDefendant");
+            xliableFace.src = `/assets/img/heads/${data.current.defendant.appearance.head}.png`
 
             xliableInput.onclick = function() {
                 ruling.coa[data.current.coas[i]] = false;
+
+                if (rulingMade()) {
+                    submit.disabled = false;
+                }
             }
 
-            p.innerHTML = `On the claim of ${tools.capitalize(data.current.coas[i].replace(/_/g, " "))}, I find that the Defendant is:`
+            p.innerHTML = `On the claim of ${tools.capitalize(data.current.coas[i].replace(/_/g, " "))}, I find in favor of the:`
 
             submitChecklist.push(liableInput, xliableInput)
 
             subDiv.appendChild(p);
-            subDiv.appendChild(liableInput);
-            subDiv.appendChild(xliableInput);
-            labelDiv.appendChild(liableLabel);
-            labelDiv.appendChild(xliableLabel);
-            labelDiv.appendChild(switchSpan);
-            subDiv.appendChild(labelDiv);
-            div.appendChild(subDiv);
+            subDiv.appendChild(liableLabel);
+            liableLabel.appendChild(liableInput);
+            liableLabel.appendChild(liableBox);
+            liableBox.appendChild(liableFace);
+            liableBox.appendChild(liableSpan);
+            subDiv.appendChild(xliableLabel);
+            xliableLabel.appendChild(xliableInput);
+            xliableLabel.appendChild(xliableBox);
+            xliableBox.appendChild(xliableSpan);
+            xliableBox.appendChild(xliableFace);
+            rulingContainer.appendChild(subDiv);
         }
 
         submit.innerHTML = "Render Verdict";
+        submit.disabled = true;
         submit.onclick = function() {
-            for (let i = 0; i < data.current.coas.length; i++) {
-                if (!submitChecklist[i * 2].checked && !submitChecklist[i * 2 + 1].checked){
-                    return;
-                }
+            if (!rulingMade()) {
+                return;
             }
-            
+
+            desk.items.verdict.div.style.marginTop = "-100%";
             ui.divs.blocker.style.opacity = 1;
-            ui.divs.blocker.style.pointerEvents = null;
-            ui.divs.backdrop.style.pointerEvents = "none"
-            desk.items.verdict.div.style.top = "-100%";
+            ui.divs.blocker.onclick = null;
+            ui.divs.backdrop.onclick = null;
 
             ruling.award = award.value;
             verdict.submit(ruling);
@@ -212,30 +242,42 @@ const ui = {
         award.type = "range";
         award.value = 0;
         award.min = 0;
-        award.max = 5000;
-        award.step = 5;
+        award.max = data.current.awardSought * 3;
+        award.step = 1;
         award.id = `awardAmount`
         awardLabel.htmlFor = `awardAmount`
-        awardLabel.innerHTML = `On ${claimPlural(data.current.coas.length)}, I award the Plaintiff:`;
+        awardLabel.innerHTML = `Plaintiff pleads relief in the sum of $${data.current.awardSought}. 
+            On ${claimPlural(data.current.coas.length)}, I award the Plaintiff:`;
+        dollarSign.innerHTML = "$";
+        dollarSign.classList.add("dollarSign");
+        awardLabel.id = "awardAmountLabel";
         awardAmount.type = "number";
-        awardAmount.value = 0;
-        awardAmount.min = 0;
-        awardAmount.max = 5000;
+        awardAmount.value = award.value;
+        awardAmount.min = award.min;
+        awardAmount.step = award.step;
 
         award.oninput = function() {
             awardAmount.value = award.value;
         }
 
         awardAmount.oninput = function() {
-            if (awardAmount.value !== "" && (!Number.isInteger(parseInt(awardAmount.value)) || awardAmount.value < 0 || awardAmount.value > 5000)) {
+            const num = parseInt(awardAmount.value)
+            if (awardAmount.value === "") {
+                return;
+            } else if (!Number.isInteger(num)) {
                 awardAmount.value = award.value;
                 return;
+            } else if (num < award.min) {
+                awardAmount.value = award.min;
+            } else if (num > award.max) {
+                awardAmount.value = award.max;
             }
             award.value = awardAmount.value;
         }
 
         div.appendChild(awardLabel);
         div.appendChild(awardAmount);
+        div.appendChild(dollarSign);
         div.appendChild(award);
         div.appendChild(submit);
 
@@ -488,6 +530,32 @@ const ui = {
         menuDiv.appendChild(buttons);
 
         ui.divs.canvas.appendChild(menuDiv);
+    },
+
+    finalScreen: function(text) {
+        const div = document.createElement("div");
+        const h1 = document.createElement("h1");
+        const categories = ["coa", "award"]
+        
+        div.id = "finalScreen";
+        h1.innerHTML = "Audience Feedback";
+
+        div.appendChild(h1);
+
+        for (let i = 0; i < categories.length; i++) {
+            const category = categories[i];
+
+            for (let j = 0; j < text[category].length; j++) {
+                const p = document.createElement("p");
+                p.innerHTML += `${text[category][j]} `;
+                div.appendChild(p);
+            }
+        }
+
+        ui.divs.canvas.appendChild(div);
+        setTimeout(function() {
+            div.style.opacity = 1;
+        }, 1300)
     },
 
     init: function() {

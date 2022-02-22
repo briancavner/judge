@@ -131,6 +131,22 @@
     deepCopy: function(obj) {
         return JSON.parse(JSON.stringify(obj));
     },
+
+    padNumber: function(num, length) {
+        let prefix = "";
+
+        if (num < 0) {
+            num *= -1;
+            prefix = "-";
+        }
+        
+        let str = `${num}`;
+        while (str.length < length) {
+            str = `0${str}`;
+        }
+
+        return `${prefix}${str}`;
+    },
 };
 
     const audio = {
@@ -256,6 +272,9 @@
                 if (inadmissible) {
                     verdict.missInadmissible(inadmissible.type, message);
                 }
+                if (sass) {
+                    verdict.missSass(speaker);
+                }
                 ui.divs.respond.innerHTML = "";
                 speech.speak();
             }
@@ -288,10 +307,10 @@
                     ui.divs.respond.innerHTML = "";
                     if (sass) {
                         speech.addToFront(data.noButtons(sass.convo));
-                        verdict.add(sass, message);
+                        verdict.findSass(speaker);
                     } else {
                         speech.addToFront(data.randomLine("j", "admonish"), data.randomLine(speaker, "admonished"))
-                        verdict.miscall("sass", message);
+                        verdict.wrongSass(speaker);
                     }
                     speech.speak();
                 }
@@ -351,8 +370,10 @@
         const submitChecklist = [];
         const div = document.createElement("div");
         const h1 = document.createElement("h1");
+        const rulingContainer = document.createElement("div");
         const award = document.createElement("input");
         const awardLabel = document.createElement("label");
+        const dollarSign = document.createElement("div");
         const awardAmount = document.createElement("input");
         const submit = document.createElement("button");
 
@@ -363,70 +384,95 @@
             return "this claim";
         };
 
+        const rulingMade = function() {
+            for (let i = 0; i < data.current.coas.length; i++) {
+                if (!submitChecklist[i * 2].checked && !submitChecklist[i * 2 + 1].checked){
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        h1.innerHTML = "Judge's Ruling";
+        rulingContainer.classList.add("rulingContainer");
+
         div.appendChild(h1);
+        div.appendChild(rulingContainer);
         
         for (let i = 0; i < data.current.coas.length; i++) {
             const subDiv = document.createElement("div");
             const p = document.createElement("p");
-            const labelDiv = document.createElement("div");
-            const switchSpan = document.createElement("span");
+            const liableBox = document.createElement("div");
             const liableInput = document.createElement("input")
             const liableLabel = document.createElement("label");
+            const liableSpan = document.createElement("span");
+            const liableFace = document.createElement("img");
+            const xliableBox = document.createElement("div");
             const xliableInput = document.createElement("input")
             const xliableLabel = document.createElement("label");
+            const xliableSpan = document.createElement("span");
+            const xliableFace = document.createElement("img");
 
-            h1.innerHTML = "Judge's Ruling";
+            subDiv.classList.add("subDiv");
+
             liableInput.type = "radio";
-            liableInput.id = `findLiable${i}`
-            liableInput.classList.add("liable");
             liableInput.name = `verdict${i}`
-            liableLabel.htmlFor = `findLiable${i}`
-            liableLabel.innerHTML = "Liable";
-            liableLabel.classList.add("liableLabel");
-            labelDiv.classList.add("liableSwitch");
+            liableSpan.innerHTML = "Plaintiff";
+            liableBox.classList.add("liableBox", "liablePlaintiff");
+            liableFace.src = `/assets/img/heads/${data.current.plaintiff.appearance.head}.png`
 
             liableInput.onclick = function() {
                 ruling.coa[data.current.coas[i]] = true;
+
+                if (rulingMade()) {
+                    submit.disabled = false;
+                }
             }
 
             xliableInput.type = "radio";
-            xliableInput.id = `findNotLiable${i}`
-            xliableInput.classList.add("notLiable");
             xliableInput.name = `verdict${i}`
-            xliableLabel.htmlFor = `findNotLiable${i}`
-            xliableLabel.innerHTML = "Not Liable";
-            xliableLabel.classList.add("notLiableLabel");
+            xliableSpan.innerHTML = "Defendant";
+            xliableBox.classList.add("liableBox", "liableDefendant");
+            xliableFace.src = `/assets/img/heads/${data.current.defendant.appearance.head}.png`
 
             xliableInput.onclick = function() {
                 ruling.coa[data.current.coas[i]] = false;
+
+                if (rulingMade()) {
+                    submit.disabled = false;
+                }
             }
 
-            p.innerHTML = `On the claim of ${tools.capitalize(data.current.coas[i].replace(/_/g, " "))}, I find that the Defendant is:`
+            p.innerHTML = `On the claim of ${tools.capitalize(data.current.coas[i].replace(/_/g, " "))}, I find in favor of the:`
 
             submitChecklist.push(liableInput, xliableInput)
 
             subDiv.appendChild(p);
-            subDiv.appendChild(liableInput);
-            subDiv.appendChild(xliableInput);
-            labelDiv.appendChild(liableLabel);
-            labelDiv.appendChild(xliableLabel);
-            labelDiv.appendChild(switchSpan);
-            subDiv.appendChild(labelDiv);
-            div.appendChild(subDiv);
+            subDiv.appendChild(liableLabel);
+            liableLabel.appendChild(liableInput);
+            liableLabel.appendChild(liableBox);
+            liableBox.appendChild(liableFace);
+            liableBox.appendChild(liableSpan);
+            subDiv.appendChild(xliableLabel);
+            xliableLabel.appendChild(xliableInput);
+            xliableLabel.appendChild(xliableBox);
+            xliableBox.appendChild(xliableSpan);
+            xliableBox.appendChild(xliableFace);
+            rulingContainer.appendChild(subDiv);
         }
 
         submit.innerHTML = "Render Verdict";
+        submit.disabled = true;
         submit.onclick = function() {
-            for (let i = 0; i < data.current.coas.length; i++) {
-                if (!submitChecklist[i * 2].checked && !submitChecklist[i * 2 + 1].checked){
-                    return;
-                }
+            if (!rulingMade()) {
+                return;
             }
-            
+
+            desk.items.verdict.div.style.marginTop = "-100%";
             ui.divs.blocker.style.opacity = 1;
-            ui.divs.blocker.style.pointerEvents = null;
-            ui.divs.backdrop.style.pointerEvents = "none"
-            desk.items.verdict.div.style.top = "-100%";
+            ui.divs.blocker.onclick = null;
+            ui.divs.backdrop.onclick = null;
 
             ruling.award = award.value;
             verdict.submit(ruling);
@@ -435,30 +481,42 @@
         award.type = "range";
         award.value = 0;
         award.min = 0;
-        award.max = 5000;
-        award.step = 5;
+        award.max = data.current.awardSought * 3;
+        award.step = 1;
         award.id = `awardAmount`
         awardLabel.htmlFor = `awardAmount`
-        awardLabel.innerHTML = `On ${claimPlural(data.current.coas.length)}, I award the Plaintiff:`;
+        awardLabel.innerHTML = `Plaintiff pleads relief in the sum of $${data.current.awardSought}. 
+            On ${claimPlural(data.current.coas.length)}, I award the Plaintiff:`;
+        dollarSign.innerHTML = "$";
+        dollarSign.classList.add("dollarSign");
+        awardLabel.id = "awardAmountLabel";
         awardAmount.type = "number";
-        awardAmount.value = 0;
-        awardAmount.min = 0;
-        awardAmount.max = 5000;
+        awardAmount.value = award.value;
+        awardAmount.min = award.min;
+        awardAmount.step = award.step;
 
         award.oninput = function() {
             awardAmount.value = award.value;
         }
 
         awardAmount.oninput = function() {
-            if (awardAmount.value !== "" && (!Number.isInteger(parseInt(awardAmount.value)) || awardAmount.value < 0 || awardAmount.value > 5000)) {
+            const num = parseInt(awardAmount.value)
+            if (awardAmount.value === "") {
+                return;
+            } else if (!Number.isInteger(num)) {
                 awardAmount.value = award.value;
                 return;
+            } else if (num < award.min) {
+                awardAmount.value = award.min;
+            } else if (num > award.max) {
+                awardAmount.value = award.max;
             }
             award.value = awardAmount.value;
         }
 
         div.appendChild(awardLabel);
         div.appendChild(awardAmount);
+        div.appendChild(dollarSign);
         div.appendChild(award);
         div.appendChild(submit);
 
@@ -713,6 +771,32 @@
         ui.divs.canvas.appendChild(menuDiv);
     },
 
+    finalScreen: function(text) {
+        const div = document.createElement("div");
+        const h1 = document.createElement("h1");
+        const categories = ["coa", "award"]
+        
+        div.id = "finalScreen";
+        h1.innerHTML = "Audience Feedback";
+
+        div.appendChild(h1);
+
+        for (let i = 0; i < categories.length; i++) {
+            const category = categories[i];
+
+            for (let j = 0; j < text[category].length; j++) {
+                const p = document.createElement("p");
+                p.innerHTML += `${text[category][j]} `;
+                div.appendChild(p);
+            }
+        }
+
+        ui.divs.canvas.appendChild(div);
+        setTimeout(function() {
+            div.style.opacity = 1;
+        }, 1300)
+    },
+
     init: function() {
         const divs = {
             body: ["backdrop", "canvas"],
@@ -745,7 +829,19 @@
             found: [],
             missed: [],
             wrong: [],
-        }
+        },
+        sass: {
+            p: {
+                deserved: 0,
+                extra: 0,
+                missed: 0,
+            },
+            d: {
+                deserved: 0,
+                extra: 0,
+                missed: 0,
+            },
+        },
     },
     contradictions: [],
 
@@ -765,6 +861,18 @@
         verdict.log.inadmissible.wrong.push({line: line, note:note})
     },
 
+    findSass: function(speaker) {
+        verdict.log.sass[speaker].deserved += 1;
+    },
+
+    missSass: function(speaker) {
+        verdict.log.sass[speaker].missed += 1;
+    },
+
+    wrongSass: function(speaker) {
+        verdict.log.sass[speaker].extra += 1;
+    },
+
     contradiction: {
         add: function(tag) {
             verdict.contradictions.push(tag)
@@ -779,9 +887,71 @@
         },
     },
 
+    textualize: function(ruling) {
+        const text = {
+            coa: [],
+            award: [],
+        };
+        
+        // Causes of Action
+        for (let i = 0; i < data.current.coas.length; i++) {
+            const coa = data.current.coas[i];
+            
+            if (ruling.coa[coa] !== data.current.coa[coa].liable) {
+                text.coa.push(data.current.coa[coa].note)
+            }
+        };
+
+        if (text.coa.length === 0) {
+            text.coa.push(data.current.verdictRight);
+        } else {
+            text.coa.unshift(data.current.verdictWrong);
+        }
+
+        // Verdict award
+
+        if (Math.abs(ruling.award - data.current.awardRight) <= 10) {
+            text.award.push(data.current.awardLines.right);
+        } else {
+            const wrongAwards = Object.keys(data.current.awardWrong);
+            const checkWrongAwards = function() {
+                for (let i = 0; i < wrongAwards.length; i++) {
+                    if (Math.abs(ruling.award - wrongAwards[i]) <= 10) {
+                        return data.current.awardWrong[wrongAwards[i]].line;
+                    }
+                }
+
+                if (ruling.award > data.current.awardRight) {
+                    return data.current.awardLines.wrongHigh;
+                }
+
+                return data.current.awardLines.wrongLow;
+            }
+            
+            text.award.push(checkWrongAwards());
+        }
+        
+        return text;
+
+        // Inadmissibles
+
+        if (ruling.inadmissible.found.length > 0) {
+
+        }
+
+        if (ruling.inadmissible.missed.length > 0) {
+            
+        }
+
+        for (let i = 0; i < ruling.inadmissible.wrong.length; i++) {
+            // .line and .note 
+        }
+    },
+
     submit: function(ruling) {
         ruling.contradiction = {};
         ruling.inadmissible = verdict.log.inadmissible;
+        ruling.sass = verdict.log.sass;
         for (contradiction in data.current.contradictions) {
             ruling.contradiction[contradiction] = {};
             if (verdict.contradictions.indexOf(contradiction) !== -1 ) {
@@ -792,8 +962,9 @@
                 ruling.contradiction[contradiction].note = data.current.contradictions[contradiction].missed
             }
         }
+
         console.log(ruling);
-        console.log(verdict.log);
+        ui.finalScreen(verdict.textualize(ruling));
     },
 };
 
@@ -1003,11 +1174,44 @@ const transcript = {
             switch (type) {
                 case "complaint":
                 case "response":
+                    const h1 = document.createElement("h1");
+                    const h2 = document.createElement("h2");
+                    const h3 = document.createElement("h3");
+                    const h4 = document.createElement("h4");
+                    const h5 = document.createElement("h5");
+                    const attest = document.createElement("p")
                     const array = data.current[type];
+                    const getFiler = function() {
+                        if (type === "complaint") {
+                            return "plaintiff";
+                        }
+                        return "defendant";
+                    }
+
+                    attest.style.marginTop = "2em";
+
+                    h1.innerHTML = `In the matter of:</br>
+                        <span style="font-style: italic">${data.current.plaintiff.name} v. ${data.current.defendant.name}</span>`;
+                    h2.innerHTML = `Case Number #${data.current.caseNum}`;
+                    h3.innerHTML = tools.capitalize(`${getFiler()}'s ${type}`);
+                    attest.innerHTML = "I hearby attest to the truthfulness and completeness of the foregoing,"
+                    h4.innerHTML = `<div class="signature">${data.current[getFiler()].name}</div>
+                        ${tools.capitalize(getFiler())}`
+                    h5.innerHTML = `Case Number #${data.current.caseNum}`;
+
+                    div.appendChild(h1);
+                    div.appendChild(h2);
+                    div.appendChild(h3);
+
                     for (let i = 0; i < array.length; i++) {
                         const p = tagize(array[i]);
                         div.appendChild(p);
                     }
+
+                    div.appendChild(attest);
+                    div.appendChild(h4);
+                    div.appendChild(h5);
+
                     break;
                 case "dictionary":
                     const dictName = function(tag) {
@@ -1090,15 +1294,22 @@ const transcript = {
             audio.desk(type, "down");
         };
 
-        self.addendum = function(array) {
-            const h2 = document.createElement("h2");
-            h2.innerHTML = "Addendum";
+        self.remove = function() {
+            self.div.remove();
+            self.icon.div.remove();
+            delete desk.items[type];
+        };
 
-            self.content.appendChild(h2);
+        self.addendum = function(array) {
+            const h3 = document.createElement("h3");
+            const insertBefore = self.content.childNodes[self.content.childNodes.length - 2]
+            h3.innerHTML = "Amendment";
+
+            self.content.insertBefore(h3, insertBefore);
 
             for (let i = 0; i < array.length; i++) {
                 const p = tagize(array[i])
-                self.content.appendChild(p);
+                self.content.insertBefore(p, insertBefore);
             }
         };
 
@@ -1125,6 +1336,13 @@ const transcript = {
         ui.addToDesk(newItem);
     },
 
+    clear: function() {
+        const items = Object.keys(desk.items);
+        for (let i = 0; i < items.length; i++) {
+            desk.items[items[i]].remove();
+        }
+    },
+
     addEvidence: function(evidence) {
         const newItem = new desk.Item("evidence", evidence);
         desk.items[`evidence${evidence.slot}`] = newItem;
@@ -1145,11 +1363,13 @@ const transcript = {
 };
 
     const data = {
-    cases: {"case1":{"title":"A Petition Pursuant to a Pulverized Pig Pen","coa":{"trespass_to_chattel":false,"negligence":false},"summary":["Plaintiff <<pname>> says that defendant <<dname>> broke her manure grate during an important social gathering at her pen, leading to embarassment and financial loss. She is suing for $260, the cost to replace her grate.","<<dtlname>> says that many people had used the manure grate that night, and that she was not the one to break it."],"shortSum":"A manure grate broken during a barnyard shindig can be fixed, but the friendship it also broke could never be repaired.","plaintiff":{"name":"Sally Swineman","title":"Ms.","appearance":{"head":3,"body":6}},"defendant":{"name":"Carla Heiferson","title":"Ms.","appearance":{"head":6,"body":2}},"dictionary":["comparative_fault","standard_of_evidence","relevance","hearsay","statement_by_party_opponent"],"complaint":["I am a [[long-time resident|long]] of Flourishing Fields, and a respected member of the community. The defendant, <<dtlname>>, is my neighbor and former friend.","On the evening of October 11, I invited <<dtlname>> and several other community members to a [[social gathering|gathering]] at my pen. The farm was going to elect a [[new livestock representative|rep]], and I wanted to run, so I was having a little campaign party to get the support of my friends.","About two hours into the event, we had just had dinner, and <<dtlname>> went to the [[manure grate|grate]]. She was in there for [[twenty minutes|time]], and I heard a loud crack while she was using it. When she came out I asked if everything was alright, and she said yes but she [[looked guilty|guilty]]. I [[discovered later|later]] when another guest tried to use the grate that it had been broken.","I [[confronted]] <<dtlname>> about it and she denied breaking my grate. I told her [[I didn't believe her|believe]], and she starting [[making a scene|scene]]. When I asked her to leave, she said some very nasty things to me and stormed out.","The evening at that point was pretty much ruined and everyone left shortly after her. I was so embarassed.","I got [[an estimate|estimate]] to fix my manure grate the next day. It cost $260, and I believe <<dtlname>> is [[responsible]] because she is the one who broke the grate."],"response":["My neighbor, <<ptlname>>, invited me and some other neighbors over for dinner and to chit-chat. I had been over [[several times|several]] and considered her a good friend.","<<ptlname>> started talking about some kind of election she was running in, and I left to use the grate. There wasn't any problem with it when I got in there.","After about [[twenty minutes|minutes]] I came back, and very shortly afterward, <<ptlname>> started interrogating me. I didn't know what it was about at first, but then she said I had broken her grate and wanted me to pay for it."],"addendums":{"response1":["I was too embarassed to admit it, which is why I initially lied and pretended that I didn't know what happened to the manure grate.","When I was [[using it|using]], I [[heard a sort of pop|pop]], and then when I checked the grate, I saw that it had broken. I tried to clean up the mess as best as I could while I was trying to think of what to say to <<ptlname>>.","I decided I wanted to tell her the truth privately, but when I saw how upset she was, and that she expected me to pay for it, I was too nervous to say anything at all. It was an accident, and [[I didn't think I should be responsible|responsible]] for fixing her grate.","I hoped she would eventually get less angry so I could admit things to her then, but then I found out she was suing me and never got the chance."]},"evidence":{"estimate":{"type":"invoice","slot":1,"content":["<h3>Gilbert Goat's Grates and Gutters</h3>","To: <<pname>>, 14 Flourishing Fields","Dated: October 12","&nbsp;",{"line":"<span style=\"float:left;\">Manure Grate</span> [[$190|price]]","style":"text-align:right;display:list-item;margin-left:3em;padding-right:1em;"},{"line":"Warrantee, 5 years<span style=\"float:right;\">$0</span>","style":"display:list-item;margin-left:3em;padding-right:1em;"},{"line":"Installation (2 hours)<span style=\"float:right;\">$70</span>","style":"display:list-item;margin-left:3em;padding-right:1em;"},"&nbsp;",{"line":"Total<span style=\"float:right;\">$260</span>","style":"padding-left:4em;padding-right:4em;"},"&nbsp;","Thank you for choosing Gilbert Goat's Grates and Gutters. Our Prices Won't Be Bleat!&trade; Please send payment within thirty (30) days of receiving this invoice."]}},"questioning":{"plaintiff":{"believe":[{"j":"Why didn't you believe <<dtlname>> when she said she hadn't broken the grate?"},{"p":"I was actually a little afraid it might happen when I saw her go in there, Your Honor."},{"p":"Everyone knows about <<dtlname>>'s weight issue, it's not a secret around the farm.","sass":{"type":"rude","convo":[{"j":"Don't tell me \"what everyone knows\", just tell me why you say were afraid it might happen."}]}},{"p":"My good girlfriend Lana Lamb had told me that she saw <<dtlname>> nearly knock over a fence when she leaned on it.","inadmissible":{"type":"hearsay","convo":[{"j":"I'm not interested in what your good girlfriend told you. If you were so concerned about <<dtlname>>'s weight, why did you invite her over?"},{"p":"I didn't know she would break anything, Your Honor. I trusted her to be more careful."}]}},{"p":"I value my stuff, and I didn't want it bent or broken. So I was listening while she was in there and heard the crack, and knew right away what happened."}],"confronted":[{"j":"When you spoke with <<dtlname>> after discovering your grate had broken, what did you say?"},{"p":"I said, \"<<dfname>>, is there anything you want to tell me about my manure grate?\"","sass":{"type":"lie","convo":[{"j":"Do you really expect me to believe from the tone of your complaint that <span class=\"i\">that</span> is how you asked her?"}]}},{"d":"That is so not true, <<pfname>>, and you know it. You came at me yelling right from the beginning.","sass":{"type":"crosstalk","convo":[{"j":"Hey, hey <<dtlname>>, do I look like I'm in need of help from you?"},{"d":"I'm sorry, Your Honor."}]}},{"p":"I did not, <<dfname>>, I was not angry until you started denying it.","sass":{"type":"crosstalk","convo":[{"j":"Stop talking to each other. When you're here, talk to me. Answer my question."}]}},{"p":"I guess I was a little upset at first, but I said, \"<<dfname>>, I know you broke my grate and I want you to pay for it\""},{"j":"And what did she say?"},{"p":"She just denied it! I told her that she was the only one who was using the grate, so it had to have been her, but she just denied it."}],"estimate":[{"j":"I'd like to see the estimate to have your grate fixed."},{"p":"Yes, Your Honor, here it is.","noButtons":true,"unlock":{"evidence":"estimate"}}],"gathering":[{"j":"Was this the first time you hosted a social gathering?"},{"p":"No, I have had them all over before, multiple times &mdash; <<dtlname>> included."},{"p":"There had never been an issue before. We had always gotten along fine."}],"grate":[{"j":"Tell me about your manure grate."},{"p":"It's a typical manure grate, same as the ones in all the other pens in the farm."},{"p":"I never had an issue with it before. <<dtlname>> has even used it."},{"p":"But I guess that was before she put on some weight.","sass":{"type":"rude","convo":[{"j":"Let me tell you something, madam, you are no petite piglet yourself, so I don't want to hear your comments about her weight."},{"d":"Thank you, Your Honor."}]},"admissible":{"note":"Even though the plaintiff said this as a rude personal attack, the fact that the defendant gained weight might be relevant in determining how and why the grate broke. Ironically, the plaintiff's insult ends up being evidence against her case; if the grate broke as a result of the defendant's weight, it suggests that she did not intentionally or negligently break it."}}],"guilty":[{"j":"Why do you say that <<dtlname>> \"looked guilty\"? What was she doing?"},{"p":"She wouldn't make eye contact, she seemed nervous, her face was flushed pink, she was jittering..."},{"p":"If you ask me, those are all telltale signs of a liar who is feeling guilty about <span class=\"i\">something</span>.","inadmissible":{"convo":[{"j":"I didn't ask you, <<ptlname>>, because you're not an expert in psychiatry. Unless you have a diploma you'd like you show me?"},{"p":"No, Your Honor."},{"j":"I asked you how she looked and what she was doing. Don't speculate about her state of mind unless you're an expert, got it?"},{"p":"Yes, Your Honor."}]}},{"p":"I found out later that it was the manure grate."}],"later":[{"j":"If you thought <<dtlname>> had broken your manure grate, why didn't you check it right away?"},{"p":"I wanted to, but I was busy hosting the party, Your Honor. Cooking and entertaining at the same time."},{"p":"I planned to check as soon as I could pull myself away, but another guest went to the grate about 10 minutes later and then came right out and got me."},{"p":"She said that my manure grate was broken, and that she thought it looked like someone had smashed it.","inadmissible":{"type":"hearsay","convo":[{"j":"Don't tell me what she thought or what she said unless she's here to speak for herself."},{"j":"Tell me what you did, and what you saw."},{"p":"I went to look at the manure grate and saw that it was broken. No one else had used it after <<dtlname>>."}],"note":"Hearsay is problematic because it is unreliable. There is no way to examine the truth of the claim \"it looked like someone had smashed it\" unless the person who said that is in court."}},{"p":"So I went in and checked, and sure enough, it was broken. No one had used it after <<dtlname>>."}],"long":[{"j":"How long have you been a resident at Flourishing Fields, <<ptlname>>?"},{"p":"About 8 years, Your Honor. I moved there after Truffle School."},{"j":"Have you repaired or replaced your manure grate in that time?"},{"p":"No, it's been the same one since I moved in. No prior problems with it."}],"responsible":[{"j":"Tell me why you believe the defendant is responsible for the damage to your grate."},{"p":"It's just common sense, Your Honor. \"You break it, you buy it.\""},{"p":"If you break something that belongs to someone, you have to pay to fix it."},{"p":"I don't want <<dfname>> to prison or nothing. I just want her to pay for what she broke."}],"rep":[{"j":"What is involved in being the livestock representative?"},{"p":"Chairing the monthly meeting, bringing community concerns to Farmer O'dell, supervising the recreation budget, that sort of thing."},{"j":"And was there anyone present that evening who seemed opposed to your candidacy, <<ptlname>>?"},{"p":"No, Your Honor. Everyone was really supportative and nice.","contradiction":"intentional"}],"scene":[{"j":"In what way did the defendant \"make a scene\", <<ptlname>>?"},{"p":"She just kept denying breaking the grate, which was getting me frustrated, so I was insisting to her that I knew she did and I expected her to pay to fix it."}],"time":[{"j":"Did you keep a stopwatch running while she was using your manure grate, <<ptlname>>?"},{"p":"No, nothing like that, Your Honor."},{"p":"But I heard the crack right after she went in there, so I was waiting for her to come out, and I happened to notice how long she took."}]},"defendant":{"several":[{"j":"When you had gone to <<ptlname>>'s residence in the past, had you used her manure grate?"},{"d":"Yes, Your Honor. Several times. I never had an issue with it before.","contradiction":"unused"},{"d":"I'm not sure why <<ptlname>> would think I would break her grate. I had no reason at all to do that."}],"minutes":[{"j":"Is 20 minutes at the manure grate a typical amount of time for you?"},{"d":"Oh, no Your Honor, but it wasn't like I was using that time to break the grate, or anything."},{"d":"It was just hard for me to figure out how to use the grate. It took me several minutes to figure out.","contradiction":"unused","sass":{"type":"lie","convo":[{"j":"You don't strike me as that dumb of a woman, <<dtlname>>."},{"d":"Thank you, Your Honor."},{"d":"...I think?"}]}}],"pop":[{"j":"Describe the pop you heard and what you were doing at the time, <<dtlname>>."},{"d":"It was just a \"pop\". It sounded like something came loose or maybe cracked below me."},{"d":"I wasn't doing anything out of the ordinary, Your Honor. Just standing there."},{"d":"I hadn't started, you know, \"going\" yet. It was only a few seconds after I put my weight on the grate."}],"using":[{"j":"Were you doing anything unusual with or on the manure grate?"},{"d":"No, Your Honor, just using it normally."},{"p":"It didn't break when everyone else was using it normally.","sass":{"type":"rude","convo":[{"j":"I didn't ask for your input, <<ptlname>>."},{"d":"I apologize, Your Honor."}]}}],"responsible":[{"j":"Tell me why you don't think you should be responsible, <<dtlname>>."},{"d":"Because it was an accident, Your Honor. I didn't do anything to her grate. I was gentle and didn't mean for it to break."},{"p":"Hey, \"you break it, you buy it\", <<dfname>>. Same thing. If you break it, you pay for it.","sass":{"type":"crosstalk","convo":[{"j":"If I want you to speak, <<ptlname>>, I will ask you a question. Until then, I want you to be quiet."}]}}]},"evidence":{"price":[{"j":"Yowch, this is a pricy meatball."},{"p":"You suck!"},{"d":"SUUUUCK!"},{"j":"Bailiff, clear the courtroom!"}]}},"contradictions":{"unused":{"of":"d","convo":[{"j":"You say you have used <<ptlname>>'s manure grate on several occassions, <<dtlname>>?"},{"d":"Yes, that's right."},{"p":"That's true, Your Honor."},{"j":"But this time it took 20 minutes to figure out?"},{"d":"..."},{"j":"Had you suffered from any brain trauma since the last time you used her grate, <<dtlname>>?"},{"d":"No, Your Honor."},{"d":"The truth is I did see the grate break, and I was trying to clean it up so no one would notice. I know that was wrong, but I was so embarassed about it, Your Honor."},{"d":"But I didn't break it on purpose, I promise!"},{"j":"I want you to submit an addendum to your Response, <<dtlname>>. And I want the truth this time.","unlock":{"addendum":"response1"}}],"found":"You caught the Defendant in a contradiction! Sometimes litigants will lie about things they're embarassed about, even if it doesn't affect their legal liability. But catching these deceptions can help encourage them to be more honest about things that do matter, so well done on your digging!","missed":"There seemed to be something contradictory about what the Defendant was saying. She seemed to be hiding something about her trip to the maneaur grate. Maybe she was embarassed with something and concealing the truth?","unseen":"There was something untrustworthy about the Defendant that seemed unexplored. Perhaps asking more questions about a topic a litigant is trying to conceal will reveal information they would prefer you not to have?"}}}},
+    cases: {"case1":{"title":"A Petition Pursuant to a Pulverized Pig Pen","coa":{"trespass_to_chattel":{"liable":false,"note":"Trespass to chattel would have required the Defendant to intentionally break the maneaur grate, but it seems like it was an accident."},"negligence":{"liable":false,"note":"The Defendant's actions didn't seem negligent. It's not clear that she failed to exercise reasonable care. It seems like she was using the maneaur grate normally, and breaking it is not a reasonably foreseeable outcome of normal use."}},"summary":["Plaintiff <<pname>> says that Defendant <<dname>> broke her manure grate during an important social gathering at her pen, leading to embarassment and financial loss. She is suing for $<<awardSought>>, the cost to replace her grate.","<<dtlname>> says that many people had used the manure grate that night, and that she was not the one to break it."],"shortSum":"A manure grate broken during a barnyard shindig can be fixed, but the friendship it also broke could never be repaired.","awardSought":260,"plaintiff":{"name":"Sally Swineman","title":"Ms.","appearance":{"head":3,"body":6},"sass":2},"defendant":{"name":"Carla Heiferson","title":"Ms.","appearance":{"head":6,"body":2},"sass":1},"dictionary":["comparative_fault","standard_of_evidence","relevance","hearsay","statement_by_party_opponent"],"complaint":["I am a [[long-time resident|long]] of Flourishing Fields, and a respected member of the community. The Defendant, <<dtlname>>, is my neighbor and former friend.","On the evening of October 11, I invited <<dtlname>> and several other community members to a [[social gathering|gathering]] at my pen. The farm was going to elect a [[new livestock representative|rep]], and I wanted to run, so I was having a little campaign party to get the support of my friends.","About two hours into the event, we had just had dinner, and <<dtlname>> went to the [[manure grate|grate]]. She was in there for [[twenty minutes|time]], and I heard a loud crack while she was using it. When she came out I asked if everything was alright, and she said yes but she [[looked guilty|guilty]]. I [[discovered later|later]] when another guest tried to use the grate that it had been broken.","I [[confronted]] <<dtlname>> about it and she denied breaking my grate. I told her [[I didn't believe her|believe]], and she starting [[making a scene|scene]]. When I asked her to leave, she said some very nasty things to me and stormed out.","The evening at that point was pretty much ruined and everyone left shortly after her. I was so embarassed.","I got [[an estimate|estimate]] to fix my manure grate the next day. It cost $<<awardSought>>, and I believe <<dtlname>> is [[responsible]] because she is the one who broke the grate."],"response":["My neighbor, <<ptlname>>, invited me and some other neighbors over for dinner and to chit-chat. I had been over [[several times|several]] and considered her a good friend.","<<ptlname>> started talking about some kind of election she was running in, and I left to use the grate. There wasn't any problem with it when I got in there.","After about [[twenty minutes|minutes]] I came back, and very shortly afterward, <<ptlname>> started interrogating me. I didn't know what it was about at first, but then she said I had broken her grate and wanted me to pay for it."],"addendums":{"response1":["I was too embarassed to admit it, which is why I initially lied and pretended that I didn't know what happened to the manure grate.","When I was [[using it|using]], I [[heard a sort of pop|pop]], and then when I checked the grate, I saw that it had broken. I tried to clean up the mess as best as I could while I was trying to think of what to say to <<ptlname>>.","I decided I wanted to tell her the truth privately, but when I saw how upset she was, and that she expected me to pay for it, I was too nervous to say anything at all. It was an accident, and [[I didn't think I should be responsible|responsible]] for fixing her grate.","I hoped she would eventually get less angry so I could admit things to her then, but then I found out she was suing me and never got the chance."]},"evidence":{"estimate":{"type":"invoice","slot":1,"content":["<h3>Gilbert Goat's Grates and Gutters</h3>","To: <<pname>>, 14 Flourishing Fields","Dated: October 12","&nbsp;",{"line":"<span style=\"float:left;\">Manure Grate</span> [[$190|price]]","style":"text-align:right;display:list-item;margin-left:3em;padding-right:1em;"},{"line":"Warrantee, 5 years<span style=\"float:right;\">$0</span>","style":"display:list-item;margin-left:3em;padding-right:1em;"},{"line":"Installation (2 hours)<span style=\"float:right;\">$70</span>","style":"display:list-item;margin-left:3em;padding-right:1em;"},"&nbsp;",{"line":"Total<span style=\"float:right;\">$260</span>","style":"padding-left:4em;padding-right:4em;"},"&nbsp;","Thank you for choosing Gilbert Goat's Grates and Gutters. Our Prices Won't Be Bleat!&trade; Please send payment within thirty (30) days of receiving this invoice."]}},"questioning":{"plaintiff":{"believe":[{"j":"Why didn't you believe <<dtlname>> when she said she hadn't broken the grate?"},{"p":"I was actually a little afraid it might happen when I saw her go in there, Your Honor."},{"p":"Everyone knows about <<dtlname>>'s weight issue, it's not a secret around the farm.","sass":{"convo":[{"j":"Don't tell me \"what everyone knows\", just tell me why you say were afraid it might happen."}]}},{"p":"My good girlfriend Lana Lamb had told me that she saw <<dtlname>> nearly knock over a fence when she leaned on it.","inadmissible":{"type":"hearsay","convo":[{"j":"I'm not interested in what your good girlfriend told you. If you were so concerned about <<dtlname>>'s weight, why did you invite her over?"},{"p":"I didn't know she would break anything, Your Honor. I trusted her to be more careful."}]}},{"p":"I value my stuff, and I didn't want it bent or broken. So I was listening while she was in there and heard the crack, and knew right away what happened."}],"confronted":[{"j":"When you spoke with <<dtlname>> after discovering your grate had broken, what did you say?"},{"p":"I said, \"<<dfname>>, is there anything you want to tell me about my manure grate?\"","sass":{"convo":[{"j":"Do you really expect me to believe from the tone of your complaint that <span class=\"i\">that</span> is how you asked her?"}]}},{"d":"That is so not true, <<pfname>>, and you know it. You came at me yelling right from the beginning.","sass":{"convo":[{"j":"Hey, hey <<dtlname>>, do I look like I'm in need of help from you?"},{"d":"I'm sorry, Your Honor."}]}},{"p":"I did not, <<dfname>>, I was not angry until you started denying it.","sass":{"convo":[{"j":"Stop talking to each other. When you're here, talk to me. Answer my question."}]}},{"p":"I guess I was a little upset at first, but I said, \"<<dfname>>, I know you broke my grate and I want you to pay for it\""},{"j":"And what did she say?"},{"p":"She just denied it! I told her that she was the only one who was using the grate, so it had to have been her, but she just denied it."}],"estimate":[{"j":"I'd like to see the estimate to have your grate fixed."},{"p":"Yes, Your Honor, here it is.","noButtons":true,"unlock":{"evidence":"estimate"}}],"gathering":[{"j":"Was this the first time you hosted a social gathering?"},{"p":"No, I have had them all over before, multiple times &mdash; <<dtlname>> included."},{"p":"There had never been an issue before. We had always gotten along fine."}],"grate":[{"j":"Tell me about your manure grate."},{"p":"It's a typical manure grate, same as the ones in all the other pens in the farm."},{"p":"I never had an issue with it before. <<dtlname>> has even used it."},{"p":"But I guess that was before she put on some weight.","sass":{"convo":[{"j":"Let me tell you something, madam, you are no petite piglet yourself, so I don't want to hear your comments about her weight."},{"d":"Thank you, Your Honor."}]},"admissible":{"note":"Even though the Plaintiff said this as a rude personal attack, the fact that the Defendant gained weight might be relevant in determining how and why the grate broke. Ironically, the Plaintiff's insult ends up being evidence against her case; if the grate broke as a result of the Defendant's weight, it suggests that she did not intentionally or negligently break it."}}],"guilty":[{"j":"Why do you say that <<dtlname>> \"looked guilty\"? What was she doing?"},{"p":"She wouldn't make eye contact, she seemed nervous, her face was flushed pink, she was jittering..."},{"p":"If you ask me, those are all telltale signs of a liar who is feeling guilty about <span class=\"i\">something</span>.","inadmissible":{"convo":[{"j":"I didn't ask you, <<ptlname>>, because you're not an expert in psychiatry. Unless you have a diploma you'd like you show me?"},{"p":"No, Your Honor."},{"j":"I asked you how she looked and what she was doing. Don't speculate about her state of mind unless you're an expert, got it?"},{"p":"Yes, Your Honor."}]}},{"p":"I found out later that it was the manure grate."}],"later":[{"j":"If you thought <<dtlname>> had broken your manure grate, why didn't you check it right away?"},{"p":"I wanted to, but I was busy hosting the party, Your Honor. Cooking and entertaining at the same time."},{"p":"I planned to check as soon as I could pull myself away, but another guest went to the grate about 10 minutes later and then came right out and got me."},{"p":"She said that my manure grate was broken, and that she thought it looked like someone had smashed it.","inadmissible":{"type":"hearsay","convo":[{"j":"Don't tell me what she thought or what she said unless she's here to speak for herself."},{"j":"Tell me what you did, and what you saw."},{"p":"I went to look at the manure grate and saw that it was broken. No one else had used it after <<dtlname>>."}],"note":"Hearsay is problematic because it is unreliable. There is no way to examine the truth of the claim \"it looked like someone had smashed it\" unless the person who said that is in court."}},{"p":"So I went in and checked, and sure enough, it was broken. No one had used it after <<dtlname>>."}],"long":[{"j":"How long have you been a resident at Flourishing Fields, <<ptlname>>?"},{"p":"About 8 years, Your Honor. I moved there after Truffle School."},{"j":"Have you repaired or replaced your manure grate in that time?"},{"p":"No, it's been the same one since I moved in. No prior problems with it."}],"responsible":[{"j":"Tell me why you believe the Defendant is responsible for the damage to your grate."},{"p":"It's just common sense, Your Honor. \"You break it, you buy it.\""},{"p":"If you break something that belongs to someone, you have to pay to fix it."},{"p":"I don't want <<dfname>> to prison or nothing. I just want her to pay for what she broke."}],"rep":[{"j":"What is involved in being the livestock representative?"},{"p":"Chairing the monthly meeting, bringing community concerns to Farmer O'dell, supervising the recreation budget, that sort of thing."},{"j":"And was there anyone present that evening who seemed opposed to your candidacy, <<ptlname>>?"},{"p":"No, Your Honor. Everyone was really supportative and nice.","contradiction":"intentional"}],"scene":[{"j":"In what way did the Defendant \"make a scene\", <<ptlname>>?"},{"p":"She just kept denying breaking the grate, which was getting me frustrated, so I was insisting to her that I knew she did and I expected her to pay to fix it."}],"time":[{"j":"Did you keep a stopwatch running while she was using your manure grate, <<ptlname>>?"},{"p":"No, nothing like that, Your Honor."},{"p":"But I heard the crack right after she went in there, so I was waiting for her to come out, and I happened to notice how long she took."}]},"defendant":{"several":[{"j":"When you had gone to <<ptlname>>'s residence in the past, had you used her manure grate?"},{"d":"Yes, Your Honor. Several times. I never had an issue with it before.","contradiction":"unused"},{"d":"I'm not sure why <<ptlname>> would think I would break her grate. I had no reason at all to do that."}],"minutes":[{"j":"Is 20 minutes at the manure grate a typical amount of time for you?"},{"d":"Oh, no Your Honor, but it wasn't like I was using that time to break the grate, or anything."},{"d":"It was just hard for me to figure out how to use the grate. It took me several minutes to figure out.","contradiction":"unused","sass":{"convo":[{"j":"You don't strike me as that dumb of a woman, <<dtlname>>."},{"d":"Thank you, Your Honor."},{"d":"...I think?"}]}}],"pop":[{"j":"Describe the pop you heard and what you were doing at the time, <<dtlname>>."},{"d":"It was just a \"pop\". It sounded like something came loose or maybe cracked below me."},{"d":"I wasn't doing anything out of the ordinary, Your Honor. Just standing there."},{"d":"I hadn't started, you know, \"going\" yet. It was only a few seconds after I put my weight on the grate."}],"using":[{"j":"Were you doing anything unusual with or on the manure grate?"},{"d":"No, Your Honor, just using it normally."},{"p":"It didn't break when everyone else was using it normally.","sass":{"convo":[{"j":"I didn't ask for your input, <<ptlname>>."},{"d":"I apologize, Your Honor."}]}}],"responsible":[{"j":"Tell me why you don't think you should be responsible, <<dtlname>>."},{"d":"Because it was an accident, Your Honor. I didn't do anything to her grate. I was gentle and didn't mean for it to break."},{"p":"Hey, \"you break it, you buy it\", <<dfname>>. Same thing. If you break it, you pay for it.","sass":{"type":"crosstalk","convo":[{"j":"If I want you to speak, <<ptlname>>, I will ask you a question. Until then, I want you to be quiet."}]}}]},"evidence":{"price":[{"j":"Yowch, this is a pricy meatball."},{"p":"You suck!"},{"d":"SUUUUCK!"},{"j":"Bailiff, clear the courtroom!"}]}},"contradictions":{"unused":{"of":"d","convo":[{"j":"You say you have used <<ptlname>>'s manure grate on several occassions, <<dtlname>>?"},{"d":"Yes, that's right."},{"p":"That's true, Your Honor."},{"j":"But this time it took 20 minutes to figure out?"},{"d":"..."},{"j":"Had you suffered from any brain trauma since the last time you used her grate, <<dtlname>>?"},{"d":"No, Your Honor."},{"d":"The truth is I did see the grate break, and I was trying to clean it up so no one would notice. I know that was wrong, but I was so embarassed about it, Your Honor."},{"d":"But I didn't break it on purpose, I promise!"},{"j":"I want you to submit an addendum to your Response, <<dtlname>>. And I want the truth this time.","unlock":{"addendum":"response1"}}],"found":"You caught the Defendant in a contradiction! Sometimes litigants will lie about things they're embarassed about, even if it doesn't affect their legal liability. But catching these deceptions can help encourage them to be more honest about things that do matter, so well done on your digging!","missed":"There seemed to be something contradictory about what the Defendant was saying. She seemed to be hiding something about her trip to the maneaur grate. Maybe she was embarassed with something and concealing the truth?","unseen":"There was something untrustworthy about the Defendant that seemed unexplored. Perhaps asking more questions about a topic a litigant is trying to conceal will reveal information they would prefer you not to have?"}},"verdictWrong":"The network's legal experts think you may have made a mistake in your ruling.","verdictRight":"The network's legal experts are very happy with your ruling! You seem to have understood and applied the law well, and came to the correct verdict.","awardRight":0,"awardWrong":{"70":{"line":"You seem to have awarded an amount just for the labor costs. If the Defendant were liable, she would be responsible for more than just the labor; she would have to pay for a reasonably similar gate replacement too.","score":2},"190":{"line":"You seem to have awarded an amount just for the grate costs, minus labor. If the Defendant were liable, she would be responsible for all of the fees associated with replacing the grate, which would include reasonable labor costs.","score":2},"260":{"line":"But you did award the correct amount of money, if the Defendant would have been liable. Unfortunately, it looks like this verdict is going to have to come out of your show's budget.","score":3}},"awardLines":{"right":"You were correct to award the Plaintiff no money on her claim. You may have noticed that you can award up to three times what the Plaintiff is requesting, so consider this for future cases!","wrongHigh":"But even if the Defendant were liable, the award you chose does not seem consistent with the evidence. Make sure to review everything thoroughly, otherwise your ruling may be subject to review! We will have to pay for that verdict from your show's budget.","wrongLow":"This line is unused (#102)"}}},
 
     dictionary: {"cause_of_action":"The grounds on which the Plaintiff is suing the Defendant. A Plaintiff will win their lawsuit if they can satisfactorily prove all of the elements of their chosen cause of action.","chattel":"Personal property, which is everyone someone owns except for cash, real property (like land or houses), and intellectual property (like patents and trademarks).","comparative_fault":"In lawsuits for neglient actions, you may consider to what degree you believe the plaintiff is responsible, and adjust your award proportionally. For instance, you may award $70 on a $100 claim if you believe the defendant was 70% responsible and the plaintiff was 30% responsible.","conversion":["The plaintiff owned or had the right to possess the property;","The defendant substantially interfered, took possession, prevented access, destroyed, or refused to return the property;","The defendant's actions were intentional and authorized; and","The act indefinitely deprived the plaintiff of their property."],"character_propensity":"Evidence or testimony about a person's character or personality traits is inadmissible when used to suggest that the person has a greater propensity or is more likely to have done something they are accused of.","hearsay":"Generally, a statement is inadmissible if it is both a) made outside of the courtroom, and b) offered as evidence to prove that the content of the statement is true (e.g. offering the out-of-court statement, \"it's raining\" to prove that it was raining). There are many exceptions to the general rule of hearsay.","howToPlay":["You are the newest judge of Animal Court TV. To be successful, you will have to discover the truth of the case before you, while also keeping the home audience entertained.","On your desk will be the Plaintiff's Complaint in the folder with the Pi (&pi;) symbol, and the Defendant's Response in the folder with the Delta (&Delta;) symbol. Both contain highlighted key terms that you can click to question the litigant about it.","During questioning, you have 3 options, you may allow the litigant to Continue to speak, rule that their testimony is Inadmissible, or give them a bit of Sass.","To help you find Inadmissible testimony, read the legal dictionary on your desk during the case. It will explain the types of testimony you need to look out for.","Sass will entertain the audience, but only if the litigant deserves it. Bullying a sympathetic litigant might make the audience turn against you.","Check the Transcript on your desk to identify potential contradictions. Click two contradictionary sentences to question the litigant about their error.","Try to find all of the relevant evidence. Spotting contraidctions and raising questions about claims that require additional evidence will often result in more submissions from the litigants.","When you are ready to rule, click the gavel. You will need to side with a litigant and decide an award, if any. Then afterward, you will explain your ruling, so be prepared!"],"negligence":["The defendant should have, and failed to, exercise reasonable care toward the plaintiff or their property;","The plaintiff suffered recognizable damages from personal injury or impairment to their property; and","The damages were a reasonably forseeable outcome of the defendant's actions."],"opinion":"Speculation, such as  is usually iadmissible,","relevance":"Testimony must be relevant to proving or disproving the Cause of Action to be admissible. The threshold for relevance is lenient; as long as a statement is reasonably probative of a consequential fact, it can be admitted.","standard_of_evidence":"In civil court, cases are decided \"by a preponderance of the evidence\". This is a lesser standard than \"beyond a reasonable doubt\", which is used in criminal court. The Plaintiff has the burden of proof, and prevails if you rule that it is more likely than not &mdash; in other words, that there is a greater than 50% chance &mdash; that their story is true.","statement_by_party_opponent":"(Hearsay Exception) Statements made by the opposing party are not hearsay, and are admissible as evidence.","trespass_to_chattel":["The plaintiff owned or had the right to possess the property;","The defendant damaged the property, or interfered with its ownership or enjoyment;","The damage or interference was intentional and unauthorized; and","The plaintiff suffered damages from the property's impairment or loss of use."]},
 
     genericLines: {"admonish":["I'm a rodent. Do you think they put me up here because I'm pretty or because I'm smart?","If you lived to be 60, you wouldn't be as smart as I am in one whisker.","This is my animal kingdom, sweet cheeks, not yours.","Did you come here just to humiliate yourself in front of ten million animals watching at home?","Don't paint stripes on a horse and try to tell me it's a zebra.","You need a therapist, not a judge."],"admonished":["Sorry, Your Honor.","Pssh, screw that.","Wow, that was way harsh.","..."],"admissible":["This line wasn't inadmissible","This line was admissible","You should have let them testify about this","This was okay to testify about","This testimony should have been permitted"]},
+
+    uiText: {"howToPlay":["You are the newest judge of a daytime court TV show in the animal kingdom, Judge Shrewdy! To be successful, you will have to discover the truth of the case before you, while also keeping the home audience entertained.","On your desk will be several documents that you can examine by clicking. You should start with the Plaintiff's Complaint and the Defendant's Response to get some context to the case. These are in folders marked with the &pi; and &Delta; symbols. They contain highlighted key terms that you can click to begin questioning the litigant to find more information or press them on a suspicious claim.","During questioning, you have 3 options, you may allow the litigant to Continue to speak, rule that their testimony is Inadmissible, or give them a bit of Sass.","To help you find Inadmissible testimony, read the legal dictionary on your desk during the case. It will explain the types of testimony you need to look out for.","Sass will entertain the audience, but only if the litigant deserves it. Bullying a sympathetic litigant might make the audience turn against you.","Check the Transcript on your desk to identify potential contradictions. Click two contradictionary sentences to question the litigant about their error.","Try to find all of the relevant evidence. Spotting contraidctions and raising questions about claims that require additional evidence will often result in more submissions from the litigants.","When you are ready to rule, click the gavel. You will need to side with a litigant and decide an award, if any. Then afterward, you will explain your ruling, so be prepared!"]},
 
     speakers: {
         j: "Judge",
@@ -1163,6 +1383,7 @@ const transcript = {
             ptitle: obj.plaintiff.title,
             dname: obj.defendant.name,
             dtitle: obj.defendant.title,
+            awardSought: obj.awardSought,
         };
 
         vars.pfname = vars.pname.split(" ")[0];
@@ -1206,6 +1427,7 @@ const transcript = {
         const selectedCase = tools.deepCopy(data.cases[`case${caseNum}`]);
         data.current = data.processVars(selectedCase);
         data.current.coas = Object.keys(data.current.coa);
+        data.current.caseNum = `${tools.rand(100, 999)}${tools.padNumber(caseNum, 3)}`
 
         desk.make();
         ui.makeLitigants();

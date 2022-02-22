@@ -77,11 +77,44 @@ const desk = {
             switch (type) {
                 case "complaint":
                 case "response":
+                    const h1 = document.createElement("h1");
+                    const h2 = document.createElement("h2");
+                    const h3 = document.createElement("h3");
+                    const h4 = document.createElement("h4");
+                    const h5 = document.createElement("h5");
+                    const attest = document.createElement("p")
                     const array = data.current[type];
+                    const getFiler = function() {
+                        if (type === "complaint") {
+                            return "plaintiff";
+                        }
+                        return "defendant";
+                    }
+
+                    attest.style.marginTop = "2em";
+
+                    h1.innerHTML = `In the matter of:</br>
+                        <span style="font-style: italic">${data.current.plaintiff.name} v. ${data.current.defendant.name}</span>`;
+                    h2.innerHTML = `Case Number #${data.current.caseNum}`;
+                    h3.innerHTML = tools.capitalize(`${getFiler()}'s ${type}`);
+                    attest.innerHTML = "I hearby attest to the truthfulness and completeness of the foregoing,"
+                    h4.innerHTML = `<div class="signature">${data.current[getFiler()].name}</div>
+                        ${tools.capitalize(getFiler())}`
+                    h5.innerHTML = `Case Number #${data.current.caseNum}`;
+
+                    div.appendChild(h1);
+                    div.appendChild(h2);
+                    div.appendChild(h3);
+
                     for (let i = 0; i < array.length; i++) {
                         const p = tagize(array[i]);
                         div.appendChild(p);
                     }
+
+                    div.appendChild(attest);
+                    div.appendChild(h4);
+                    div.appendChild(h5);
+
                     break;
                 case "dictionary":
                     const dictName = function(tag) {
@@ -164,15 +197,22 @@ const desk = {
             audio.desk(type, "down");
         };
 
-        self.addendum = function(array) {
-            const h2 = document.createElement("h2");
-            h2.innerHTML = "Addendum";
+        self.remove = function() {
+            self.div.remove();
+            self.icon.div.remove();
+            delete desk.items[type];
+        };
 
-            self.content.appendChild(h2);
+        self.addendum = function(array) {
+            const h3 = document.createElement("h3");
+            const insertBefore = self.content.childNodes[self.content.childNodes.length - 2]
+            h3.innerHTML = "Amendment";
+
+            self.content.insertBefore(h3, insertBefore);
 
             for (let i = 0; i < array.length; i++) {
                 const p = tagize(array[i])
-                self.content.appendChild(p);
+                self.content.insertBefore(p, insertBefore);
             }
         };
 
@@ -197,6 +237,13 @@ const desk = {
         const newItem = new desk.Item(item);
         desk.items[item] = newItem
         ui.addToDesk(newItem);
+    },
+
+    clear: function() {
+        const items = Object.keys(desk.items);
+        for (let i = 0; i < items.length; i++) {
+            desk.items[items[i]].remove();
+        }
     },
 
     addEvidence: function(evidence) {
