@@ -16,3 +16,17 @@ admissible:
   - You should have let them testify about this
   - This was okay to testify about
   - This testimony should have been permitted
+notLiableMoney:
+  - However, if you do not find the Defendant liable for any of the causes of action, an award of money is not appropriate.
+finalScores:
+  0: We're doomed!
+  0.5: Are you trying to make this network fail?
+  1: The network won't even air this episode
+  1.5: People aren't going to watch this
+  2: We'll need a lot of improvement
+  2.5: That was okay, but we need you to be a star!
+  3: Not bad, but keep improving!
+  3.5: You almost got it, just need a bit of polish
+  4: That was pretty good, nicely done!
+  4.5: Great job, that was amazing!
+  5: Wonderfully done, you're truly a master judge!

@@ -3,6 +3,14 @@ const tools = {
         return Math.floor(Math.random() * (b - a + 1) + a);
     },
 
+    greater: function(a, b) {
+        if (a > b) {
+            return a;
+        }
+
+        return b;
+    },
+
     capitalize: function(string) {
         return string.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())));
     },

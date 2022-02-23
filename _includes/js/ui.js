@@ -302,7 +302,7 @@ const ui = {
 
                 head.style.transform = `rotate(${rand}deg)`;
 
-                ui.animations[litigant] = setTimeout(function() {headAnimation(head)}, tools.rand(7000, 18000));
+                ui.animations[litigant] = setTimeout(function() {headAnimation(head)}, tools.rand(5000, 13000));
             }
 
             self.div = document.createElement("div");
@@ -532,15 +532,37 @@ const ui = {
         ui.divs.canvas.appendChild(menuDiv);
     },
 
-    finalScreen: function(text) {
+    finalScreen: function(text, categories, score) {
         const div = document.createElement("div");
+        const content = document.createElement("content");
         const h1 = document.createElement("h1");
-        const categories = ["coa", "award"]
+        const finalScore = document.createElement("h2");
+        const scoreComment = document.createElement("h3");
+        const reset = document.createElement("button");
+
+        const starify = function(num) {
+            let str = "";
+            
+            for (let i = 0; i < 5; i++) {
+                if (num >= 1) {
+                    num -= 1;
+                    str += `<span class="star gold"></span>`;
+                } else if (num > 0) {
+                    num = 0;
+                    str += `<span class="star half"></span>`;
+                } else {
+                    str += `<span class="star"></span>`;
+                }
+            }
+
+            return str;
+        }
         
         div.id = "finalScreen";
+        content.classList.add("content");
         h1.innerHTML = "Audience Feedback";
 
-        div.appendChild(h1);
+        content.appendChild(h1);
 
         for (let i = 0; i < categories.length; i++) {
             const category = categories[i];
@@ -548,14 +570,38 @@ const ui = {
             for (let j = 0; j < text[category].length; j++) {
                 const p = document.createElement("p");
                 p.innerHTML += `${text[category][j]} `;
-                div.appendChild(p);
+                content.appendChild(p);
             }
         }
+
+        finalScore.innerHTML = starify(score);
+        scoreComment.innerHTML = data.genericLines.finalScores[score];
+
+        reset.innerHTML = "Back to Main Menu";
+        reset.onclick = function() {
+            ui.reset(div);
+        }
+
+        content.appendChild(finalScore);
+        content.appendChild(scoreComment);
+        content.appendChild(reset);
+
+        div.appendChild(content);
 
         ui.divs.canvas.appendChild(div);
         setTimeout(function() {
             div.style.opacity = 1;
         }, 1300)
+    },
+
+    reset: function(finalScreen) {
+        finalScreen.remove();
+        desk.clear();
+        ui.divs.blocker.style = null;
+        ui.divs.plaintiff.innerHTML = "";
+        ui.divs.defendant.innerHTML = "";
+
+        ui.showMenu("start");
     },
 
     init: function() {

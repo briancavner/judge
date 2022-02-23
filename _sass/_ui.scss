@@ -117,7 +117,7 @@
     left: 20%;
     width: 60%;
     height: 86%;
-    border: 0.25em solid #D4AF37;
+    border: 0.25em solid $gold;
     outline: 0.75em solid $white;
     background-color: $white;
     box-shadow: 2em 2em 1em 0 rgba(0,0,0,0.75);
@@ -125,8 +125,50 @@
     opacity: 0;
     transition: opacity 2s;
 
+    .content {
+        position: absolute;
+        overflow-y: auto;
+        margin: 1em;
+        height: 95%;
+    }
+
     h1 {
         text-align: center;
+    }
+
+    h2 {
+        margin-top: 2em;
+        text-align: center;
+    }
+
+    h3 {
+        text-align: center;
+    }
+
+    .star {
+        width: 1em;
+        display: inline-block;
+        color: gray;
+        font-size: 3em;
+        line-height: 1em;
+    }
+
+    .star:before {
+        content: '\2605';
+    }
+
+    .star.gold {
+        color: $gold;
+    }
+
+    .star.half:after {
+        content: '\2605';
+        color: $gold;
+        margin-left: -0.84em;
+        height: 1em;
+        width: 0.42em;
+        position: absolute;
+        overflow: hidden;
     }
 }
 

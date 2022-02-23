@@ -64,6 +64,7 @@ const data = {
         data.current = data.processVars(selectedCase);
         data.current.coas = Object.keys(data.current.coa);
         data.current.caseNum = `${tools.rand(100, 999)}${tools.padNumber(caseNum, 3)}`
+        data.current.saveSlot = caseNum;
 
         desk.make();
         ui.makeLitigants();

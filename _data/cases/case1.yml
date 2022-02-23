@@ -250,3 +250,12 @@ awardLines:
   right: You were correct to award the Plaintiff no money on her claim. You may have noticed that you can award up to three times what the Plaintiff is requesting, so consider this for future cases!
   wrongHigh: But even if the Defendant were liable, the award you chose does not seem consistent with the evidence. Make sure to review everything thoroughly, otherwise your ruling may be subject to review! We will have to pay for that verdict from your show's budget.
   wrongLow: This line is unused (#102)
+sassLines:
+  plaintiff:
+    tooSoft: The audience thought the Plaintiff came off as a bit of a jerk, and that you let her off too easy. Don't let a litigant get away with being a bully.
+    tooHard: Although the Plaintiff was a bit of a jerk, the audience thought you were a bit too hard on her. It's important to call out a litigant, but don't become a bully yourself.
+    justRight: The audience thought the Plaintiff was a bit of a bully, and enjoyed watching you put her in her place. You controlled your courtroom well!
+  defendant:
+    tooSoft: The Defendant seemed shifty, and the audience want you to be a little rougher with her. They feel like she got away with too much, even if she wasn't responsible.
+    tooHard: The Defendant came off sympathetic to the audience, and they didn't like how rough you were with her. Although you can be tough with rude litigants, make sure you ease off a bit if they only make a few mistakes.
+    justRight: They thought your treatment of the Defendant was appropriate -- tough enough without becoming unnecessarily rude.

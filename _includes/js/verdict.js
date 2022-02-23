@@ -62,11 +62,48 @@ const verdict = {
         },
     },
 
-    textualize: function(ruling) {
+    process: function(ruling) {
+        const categories = ["coa", "award", "sass"];
         const text = {
             coa: [],
             award: [],
+            sass: [],
         };
+
+        const score = tools.deepCopy(text);
+
+        const allFalse = function(obj) {
+            const keys = Object.keys(obj);
+
+            for (let i = 0; i < keys.length; i++) {
+                if (obj[keys[i]] === true) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+
+        const scoreCalculation = function() {
+            const subtotals = [];
+
+            const avgArray = function(array) {
+                let subtotal = 0;
+
+                for (let i = 0; i < array.length; i++) {
+                    subtotal += array[i];
+                }
+
+                return Math.round(2 * subtotal / tools.greater(1, array.length)) / 2;
+            }
+            
+            for (let i = 0; i < categories.length; i++) {
+                const category = categories[i];
+                subtotals.push(avgArray(score[category]))
+            }
+
+            return avgArray(subtotals);
+        }
         
         // Causes of Action
         for (let i = 0; i < data.current.coas.length; i++) {
@@ -74,6 +111,9 @@ const verdict = {
             
             if (ruling.coa[coa] !== data.current.coa[coa].liable) {
                 text.coa.push(data.current.coa[coa].note)
+                score.coa.push(1);
+            } else {
+                score.coa.push(5);
             }
         };
 
@@ -85,30 +125,41 @@ const verdict = {
 
         // Verdict award
 
-        if (Math.abs(ruling.award - data.current.awardRight) <= 10) {
+        if (allFalse(ruling.coa) && ruling.award > 0) {
+        // If no liability is found, but money is awarded
+            text.award.push(tools.pickOne(data.genericLines.notLiableMoney));
+            score.award.push(0);
+        } else if (Math.abs(ruling.award - data.current.awardRight) <= 10) {
+        // If the amount awarded is right
             text.award.push(data.current.awardLines.right);
+            score.award.push(5);
         } else {
+        // If the amount awarded is wrong
             const wrongAwards = Object.keys(data.current.awardWrong);
+            
             const checkWrongAwards = function() {
+            // If the wrong amount is one of the predicted amounts
                 for (let i = 0; i < wrongAwards.length; i++) {
                     if (Math.abs(ruling.award - wrongAwards[i]) <= 10) {
-                        return data.current.awardWrong[wrongAwards[i]].line;
+                        return {text: obj.line, score: obj.score};
                     }
                 }
 
                 if (ruling.award > data.current.awardRight) {
-                    return data.current.awardLines.wrongHigh;
+                // If the award is too high
+                    return {text: data.current.awardLines.wrongHigh, score: 1};
                 }
 
-                return data.current.awardLines.wrongLow;
+                // If the award is too low
+                return {text: data.current.awardLines.wrongLow, score: 1};
             }
             
-            text.award.push(checkWrongAwards());
+            let returnResults = checkWrongAwards() 
+            score.award.push(returnResults.score)
+            text.award.push(returnResults.text);
         }
-        
-        return text;
 
-        // Inadmissibles
+        // Inadmissible
 
         if (ruling.inadmissible.found.length > 0) {
 
@@ -121,9 +172,32 @@ const verdict = {
         for (let i = 0; i < ruling.inadmissible.wrong.length; i++) {
             // .line and .note 
         }
+
+        // Sass
+
+        for (let i = 0; i < 2; i++) {
+            const litigant = ["plaintiff", "defendant"][i]
+            const sasses = ruling.sass[litigant[0]]
+            
+            if (sasses.missed + data.current[litigant].sass > sasses.deserved + sasses.extra) {
+                text.sass.push(data.current.sassLines[litigant].tooSoft)
+                score.sass.push(1);
+            } else if (sasses.extra > data.current[litigant].sass) {
+                text.sass.push(data.current.sassLines[litigant].tooHard)
+                score.sass.push(2);
+            } else {
+                text.sass.push(data.current.sassLines[litigant].justRight)
+                score.sass.push(5);
+            }
+        }
+
+        console.log(score);
+        return {text: text, categories: categories, score: scoreCalculation()};
     },
 
     submit: function(ruling) {
+        let results = {};
+
         ruling.contradiction = {};
         ruling.inadmissible = verdict.log.inadmissible;
         ruling.sass = verdict.log.sass;
@@ -138,7 +212,13 @@ const verdict = {
             }
         }
 
+
+        results = verdict.process(ruling)
+        
         console.log(ruling);
-        ui.finalScreen(verdict.textualize(ruling));
+        console.log(results);
+        
+        // save results.score
+        ui.finalScreen(results.text, results.categories, results.score);
     },
 };
