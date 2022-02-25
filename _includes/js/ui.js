@@ -572,6 +572,10 @@ const ui = {
                 p.innerHTML += `${text[category][j]} `;
                 content.appendChild(p);
             }
+
+            if (category === "inadmissible") {
+                content.appendChild(text.inadmissibleCollapse)
+            }
         }
 
         finalScore.innerHTML = starify(score);

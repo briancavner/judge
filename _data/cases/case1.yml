@@ -248,7 +248,7 @@ awardWrong:
     score: 3
 awardLines:
   right: You were correct to award the Plaintiff no money on her claim. You may have noticed that you can award up to three times what the Plaintiff is requesting, so consider this for future cases!
-  wrongHigh: But even if the Defendant were liable, the award you chose does not seem consistent with the evidence. Make sure to review everything thoroughly, otherwise your ruling may be subject to review! We will have to pay for that verdict from your show's budget.
+  wrongHigh: Even if the Defendant were liable, the award you chose does not seem consistent with the evidence. Make sure to review everything thoroughly, otherwise your ruling may be subject to review! We will have to pay for that verdict from your show's budget.
   wrongLow: This line is unused (#102)
 sassLines:
   plaintiff:
@@ -259,3 +259,8 @@ sassLines:
     tooSoft: The Defendant seemed shifty, and the audience want you to be a little rougher with her. They feel like she got away with too much, even if she wasn't responsible.
     tooHard: The Defendant came off sympathetic to the audience, and they didn't like how rough you were with her. Although you can be tough with rude litigants, make sure you ease off a bit if they only make a few mistakes.
     justRight: They thought your treatment of the Defendant was appropriate -- tough enough without becoming unnecessarily rude.
+inadmissibleLines:
+  2: You did a great job identifying the admissibility of evidence on hearsay and relevance grounds! Litigants don't know the law, and will continue to try to get this evidence admitted in future cases, so keep your eyes sharp!
+  1: Although you made a few mistakes with admissibility, hopefully this case helped you sharpen your ability to spot hearsay and irrelevance! You will continue to see these in future cases. Check the legal dictionary if you need some more help.
+  0: You may want to review the legal dictionary for hearsay and relevance. Catching inadmissible statements is an important part of being a judge, but you also don't want to be overzealous and block admissable ones!
+  -1: You didn't ask enough questions to determine if you could catch hearsay or irrelevant testimony.

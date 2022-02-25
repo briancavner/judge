@@ -17,8 +17,12 @@ const verdict = {
                 missed: 0,
             },
         },
+        contradiction: {
+            seenOnce: {},
+            seenTwice: [],
+            found: [],
+        }
     },
-    contradictions: [],
 
     findInadmissible: function(input, line) {
         const entry = Object.assign({}, input); // Clone without altering original
@@ -48,29 +52,15 @@ const verdict = {
         verdict.log.sass[speaker].extra += 1;
     },
 
-    contradiction: {
-        add: function(tag) {
-            verdict.contradictions.push(tag)
-        },
-
-        found: function(tag) {
-            if (verdict.contradictions.indexOf(tag) === -1) {
-                return false;
-            }
-
-            return true;
-        },
+    findContradiction: function(tag) {
+        verdict.log.contradiction.seenTwice.splice(verdict.log.contradiction.seenTwice.indexOf(tag), 1)
+        verdict.log.contradiction.found.push(tag);
     },
 
     process: function(ruling) {
-        const categories = ["coa", "award", "sass"];
-        const text = {
-            coa: [],
-            award: [],
-            sass: [],
-        };
-
-        const score = tools.deepCopy(text);
+        const categories = ["coa", "award", "contradiction", "inadmissible", "sass"];
+        const text = {};
+        const score = {};
 
         const allFalse = function(obj) {
             const keys = Object.keys(obj);
@@ -87,40 +77,44 @@ const verdict = {
         const scoreCalculation = function() {
             const subtotals = [];
 
-            const avgArray = function(array) {
-                let subtotal = 0;
-
-                for (let i = 0; i < array.length; i++) {
-                    subtotal += array[i];
-                }
-
-                return Math.round(2 * subtotal / tools.greater(1, array.length)) / 2;
+            const round = function(int) {
+                return Math.round(2 * int) / 2;
             }
             
             for (let i = 0; i < categories.length; i++) {
                 const category = categories[i];
-                subtotals.push(avgArray(score[category]))
+                subtotals.push(round(tools.avgArray(score[category])))
             }
 
-            return avgArray(subtotals);
+            return round(tools.avgArray(subtotals));
+        }
+
+        for (let i = 0; i < categories.length; i++) {
+            text[categories[i]] = [];
+            score[categories[i]] = [];
         }
         
         // Causes of Action
-        for (let i = 0; i < data.current.coas.length; i++) {
-            const coa = data.current.coas[i];
-            
-            if (ruling.coa[coa] !== data.current.coa[coa].liable) {
-                text.coa.push(data.current.coa[coa].note)
-                score.coa.push(1);
-            } else {
-                score.coa.push(5);
-            }
-        };
-
-        if (text.coa.length === 0) {
-            text.coa.push(data.current.verdictRight);
+        if (transcript.log.length < 10) {
+            score.coa.push(0);
+            text.coa.push(data.genericLines.noQuestions);
         } else {
-            text.coa.unshift(data.current.verdictWrong);
+            for (let i = 0; i < data.current.coas.length; i++) {
+                const coa = data.current.coas[i];
+                
+                if (ruling.coa[coa] !== data.current.coa[coa].liable) {
+                    text.coa.push(data.current.coa[coa].note)
+                    score.coa.push(1);
+                } else {
+                    score.coa.push(5);
+                }
+            };
+
+            if (text.coa.length === 0) {
+                text.coa.push(data.current.verdictRight);
+            } else {
+                text.coa.unshift(data.current.verdictWrong);
+            }
         }
 
         // Verdict award
@@ -159,19 +153,69 @@ const verdict = {
             text.award.push(returnResults.text);
         }
 
+        // Contradiction
+
+        for (key in ruling.contradiction) {
+            const contradiction = ruling.contradiction[key]
+            text.contradiction.push(contradiction.note);
+
+            if (contradiction.found) {
+                score.contradiction.push(5)
+            } else if (contradiction.seenTwice) {
+                score.contradiction.push(3)
+            } else if (contradiction.seenOnce) {
+                score.contradiction.push(1.5)
+            } else {
+                score.contradiction.push(0)
+            }
+        }
+
         // Inadmissible
 
-        if (ruling.inadmissible.found.length > 0) {
-
+        const scoreToLine = function(int) {
+            // That math is just to get -1, 0, 1, and 2 out of specific ranges (0, 0.5-2, 2.5-3.5, 4-5)
+            const nonZero = tools.greater(int, 0.1);
+            return Math.floor((nonZero - (1 / (10 * nonZero))) / 2 + 0.02);
         }
 
-        if (ruling.inadmissible.missed.length > 0) {
+        const inadmissibleCollapse = document.createElement("div");
+        inadmissibleCollapse.classList.add("collapse");
+
+        for (let i = 0; i < 3; i++) {
+            const loopList = ["found", "missed", "wrong"];
+            const loopScores = [5, 1, 2];
             
+            const inadmissibles = ruling.inadmissible[loopList[i]];
+
+            console.log(inadmissibles)
+
+            if (inadmissibles.length > 0) {
+                const h4 = document.createElement("h4");
+                h4.innerHTML = data.genericLines.inadmissibleHeader[loopList[i]]
+
+                inadmissibleCollapse.appendChild(h4);
+            }
+
+            for (let j = 0; j < inadmissibles.length; j++) {
+                const quote = document.createElement("p");
+                const note = document.createElement("p");
+
+                score.inadmissible.push(loopScores[i])
+                
+                quote.innerHTML = inadmissibles[j].line;
+                note.innerHTML = inadmissibles[j].note;
+
+                inadmissibleCollapse.appendChild(quote);
+                inadmissibleCollapse.appendChild(note);
+            }
         }
 
-        for (let i = 0; i < ruling.inadmissible.wrong.length; i++) {
-            // .line and .note 
+        if (score.inadmissible.length === 0) {
+            score.inadmissible.push(0);
         }
+
+        text.inadmissible.push(data.current.inadmissibleLines[scoreToLine(tools.avgArray(score.inadmissible))]);
+        text.inadmissibleCollapse = inadmissibleCollapse;
 
         // Sass
 
@@ -179,7 +223,10 @@ const verdict = {
             const litigant = ["plaintiff", "defendant"][i]
             const sasses = ruling.sass[litigant[0]]
             
-            if (sasses.missed + data.current[litigant].sass > sasses.deserved + sasses.extra) {
+            if (sasses.deserved + sasses.extra === 0 && data.current[litigant].sass > 0) {
+                text.sass.push(data.current.sassLines[litigant].tooSoft)
+                score.sass.push(0);
+            } else if (sasses.missed + data.current[litigant].sass > sasses.deserved + sasses.extra) {
                 text.sass.push(data.current.sassLines[litigant].tooSoft)
                 score.sass.push(1);
             } else if (sasses.extra > data.current[litigant].sass) {
@@ -189,6 +236,10 @@ const verdict = {
                 text.sass.push(data.current.sassLines[litigant].justRight)
                 score.sass.push(5);
             }
+        }
+
+        if (tools.avgArray(score.sass) <= 1) {
+            text.sass.push(data.genericLines.doSass);
         }
 
         console.log(score);
@@ -203,12 +254,18 @@ const verdict = {
         ruling.sass = verdict.log.sass;
         for (contradiction in data.current.contradictions) {
             ruling.contradiction[contradiction] = {};
-            if (verdict.contradictions.indexOf(contradiction) !== -1 ) {
+            if (verdict.log.contradiction.found.includes(contradiction)) {
                 ruling.contradiction[contradiction].found = true;
                 ruling.contradiction[contradiction].note = data.current.contradictions[contradiction].found
-            } else {
-                ruling.contradiction[contradiction].found = false;
+            } else if (verdict.log.contradiction.seenTwice.includes(contradiction)) {
+                ruling.contradiction[contradiction].seenTwice = true;
                 ruling.contradiction[contradiction].note = data.current.contradictions[contradiction].missed
+            } else if (Object.keys(verdict.log.contradiction.seenOnce).includes(contradiction)) {
+                ruling.contradiction[contradiction].seenOnce = true;
+                ruling.contradiction[contradiction].note = data.current.contradictions[contradiction].unseen
+            } else {
+                ruling.contradiction[contradiction].unseen = true;
+                ruling.contradiction[contradiction].note = data.current.contradictions[contradiction].unseen
             }
         }
 

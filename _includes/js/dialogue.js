@@ -63,6 +63,19 @@ const speech = {
         ui.speech.speak(speaker, message);
         transcript.add(speaker, message, nextLine.contradiction);
 
+        if (nextLine.contradiction && 
+            !verdict.log.contradiction.seenTwice.includes(nextLine.contradiction) &&
+            !verdict.log.contradiction.found.includes(nextLine.contradiction)) {
+                if (!Object.keys(verdict.log.contradiction.seenOnce).includes(nextLine.contradiction)) {
+                    verdict.log.contradiction.seenOnce[nextLine.contradiction] = message;
+                } else if (verdict.log.contradiction.seenOnce[nextLine.contradiction] !== message) {
+                    delete verdict.log.contradiction.seenOnce[nextLine.contradiction];
+                    verdict.log.contradiction.seenTwice.push(nextLine.contradiction);
+                }
+                const seens = Object.keys(verdict.log.contradiction.seenOnce)
+                verdict.log.contradiction
+        }
+
         if (nextLine.unlock) {
             desk.unlock(nextLine.unlock);
         }
@@ -102,12 +115,12 @@ const transcript = {
                 transcript.contradiction.contradiction !== contradiction) {
             ui.contradiction(speaker, transcript.contradiction.message, message);
             console.log("not contradictory")
-        } else if (verdict.contradiction.found(contradiction)) {
+        } else if (verdict.log.contradiction.found.includes(contradiction)) {
             console.log("found already")
         } else {
             ui.divs.blocker.onclick(); // This is two times I've done this, it feels not good
             speech.speak(data.noButtons(data.current.contradictions[contradiction].convo));
-            verdict.contradiction.add(contradiction)
+            verdict.findContradiction(contradiction)
         }
 
         transcript.contradiction = null;

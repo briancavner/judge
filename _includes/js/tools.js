@@ -19,6 +19,16 @@ const tools = {
         return array[tools.rand(0, array.length - 1)];
     },
 
+    avgArray: function(array) {
+        let subtotal = 0;
+
+        for (let i = 0; i < array.length; i++) {
+            subtotal += array[i];
+        }
+
+        return subtotal / tools.greater(1, array.length);
+    },
+
     shuffle: function(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
