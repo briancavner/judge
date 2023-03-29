@@ -90,3 +90,10 @@ const tester = function(caseNum) {
     testDict();
     checkTags(getAllTags(addAddendums("complaint")), getAllTags(addAddendums("response")), Object.keys(testCase.questioning.plaintiff), Object.keys(testCase.questioning.defendant));
 };
+
+const testAll = function() {
+    for (testCase in data.cases) {
+        console.log(`Testing ${testCase}`);
+        tester(testCase);
+    }
+}

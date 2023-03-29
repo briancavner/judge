@@ -35,7 +35,7 @@ dictionary:
 complaint:
   - I am a [[long-time resident|long]] of Flourishing Fields, and a respected member of the community. The Defendant, <<dtlname>>, is my neighbor and former friend.
   - On the evening of October 11, I invited <<dtlname>> and several other community members to a [[social gathering|gathering]] at my pen. The farm was going to elect a [[new livestock representative|rep]], and I wanted to run, so I was having a little campaign party to get the support of my friends.
-  - About two hours into the event, we had just had dinner, and <<dtlname>> went to the [[manure grate|grate]]. She was in there for [[twenty minutes|time]], and I heard a loud crack while she was using it. When she came out I asked if everything was alright, and she said yes but she [[looked guilty|guilty]]. I [[discovered later|later]] when another guest tried to use the grate that it had been broken.
+  - About two hours into the event, we had just had dinner, and <<dtlname>> went to the [[manure grate|grate]]. She was in there for [[twenty minutes|time]], and I heard a loud crack while she was using it. When she came out I asked if everything was alright, and she said yes but she [[looked guilty|guilty]]. I [[discovered later|later]] when another guest tried to use the grate that <<dtlname>> had [[intentionally broken it|intentional]].
   - I [[confronted]] <<dtlname>> about it and she denied breaking my grate. I told her [[I didn't believe her|believe]], and she starting [[making a scene|scene]]. When I asked her to leave, she said some very nasty things to me and stormed out.
   - The evening at that point was pretty much ruined and everyone left shortly after her. I was so embarassed.
   - I got [[an estimate|estimate]] to fix my manure grate the next day. It cost $<<awardSought>>, and I believe <<dtlname>> is [[responsible]] because she is the one who broke the grate.
@@ -135,6 +135,13 @@ questioning:
             - j: I asked you how she looked and what she was doing. Don't speculate about her state of mind unless you're an expert, got it?
             - p: Yes, Your Honor.
       - p: I found out later that it was the manure grate.
+    intentional:
+      - j: Tell me why you think <<dtlname>> broke your grate intentionally.
+      - p: I've been thinking she wanted to sabotage my dinner party and make me look bad in front of my other friends.
+      - j: Why would she want to make you look bad?
+      - p: Probably because she's jealous of me maybe becoming livestock rep and wanted to sabotage my chances.
+        contradiction: intentional
+      - d: I never wanted to do that, <<pfname>>.
     later:
       - j: If you thought <<dtlname>> had broken your manure grate, why didn't you check it right away?
       - p: I wanted to, but I was busy hosting the party, Your Honor. Cooking and entertaining at the same time.
@@ -215,8 +222,16 @@ questioning:
       - d: SUUUUCK!
       - j: Bailiff, clear the courtroom!
 contradictions:
+  intentional:
+    convo:
+      - j: I don't think you really believe that the Defendant damaged your manure grate intentionally, <<ptlname>>.
+      - p: She might have.
+      - j: Listen, I might have been a supermodel instead of a judge, but I'm smarter than I am beautiful, so I'm here.
+      - d: You know I wouldn't do that on purpose, <<pfname>>
+    found: You caught the Defendant in a contradiction! Sometimes litigants will lie about things they're embarassed about, even if it doesn't affect their legal liability. But catching these deceptions can help encourage them to be more honest about things that do matter, so well done on your digging!
+    missed: There seemed to be something contradictory about what the Defendant was saying. She seemed to be hiding something about her trip to the maneaur grate. Maybe she was embarassed with something and concealing the truth?
+    unseen: There was something untrustworthy about the Defendant that seemed unexplored. Perhaps asking more questions about a topic a litigant is trying to conceal will reveal information they would prefer you not to have?
   unused:
-    of: d
     convo:
       - j: You say you have used <<ptlname>>'s manure grate on several occassions, <<dtlname>>?
       - d: Yes, that's right.
